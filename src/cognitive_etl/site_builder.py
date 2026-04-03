@@ -623,7 +623,8 @@ def format_markdown_value(value: Any) -> str:
         return "true" if value else "false"
     if isinstance(value, (int, float)):
         return str(value)
-    return f'"{str(value).replace("\"", "\\\"")}"'
+    escaped = str(value).replace('"', '\\"')
+    return f'"{escaped}"'
 
 
 def build_frontmatter(metadata: dict[str, Any]) -> str:
