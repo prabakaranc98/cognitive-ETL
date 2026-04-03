@@ -17,17 +17,21 @@
         <span>{{ site_title }}</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="./">Gallery</a>
-        <a href="./captures.html" {% if entry_kind == 'capture' %}class="active"{% endif %}>Captures</a>
+        <a href="./">Overview</a>
         <a href="./graph.html">Graph</a>
+        <a href="./#sources-list" {% if entry_kind == 'source' %}class="active"{% endif %}>Sources</a>
+        <a href="./captures.html" {% if entry_kind == 'capture' %}class="active"{% endif %}>Captures</a>
         <a href="./atoms.html" {% if entry_kind == 'atom' %}class="active"{% endif %}>Atoms</a>
+        <a href="./#artifacts-list" {% if entry_kind == 'artifact' %}class="active"{% endif %}>Artifacts</a>
       </nav>
     </div>
   </header>
 
-  <main class="container" id="main-content">
-    <section class="detail-hero">
+  <main class="container page-shell" id="main-content">
+    <section class="detail-hero {% if entry_kind == 'source' %}detail-hero--source{% endif %}">
+      {% if entry_kind != 'source' %}
       <p class="detail-hero__eyebrow">{{ entry_kind | title }}</p>
+      {% endif %}
       <h1 class="detail-hero__title">{{ entry.display_title or entry.Name or entry.Claim or 'Untitled' }}</h1>
       {% if entry_kind == 'source' and entry['Key Takeaway'] %}
       <p class="detail-hero__summary">{{ entry['Key Takeaway'] }}</p>
@@ -39,12 +43,39 @@
       <p class="detail-hero__summary">{{ entry.Definition }}</p>
       {% endif %}
 
+      {% if entry_kind == 'source' %}
+      <dl class="source-provenance">
+        <div>
+          <dt>Author</dt>
+          <dd>{{ entry.Author or 'Unknown' }}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>{{ entry.Status or 'Queue' }}</dd>
+        </div>
+        <div>
+          <dt>Progress</dt>
+          <dd>{{ entry.progress_label }}</dd>
+        </div>
+        {% if entry.Domain %}
+        <div>
+          <dt>Domains</dt>
+          <dd>{{ entry.Domain | join(' · ') }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+      {% endif %}
+
       <div class="hero-meta">
         {% if entry_kind == 'source' %}
-        <span class="hero-meta__pill">{{ entry.Status or 'Queue' }}</span>
-        <span class="hero-meta__pill">{{ entry.progress_label }}</span>
         {% if entry.capture_count %}
         <span class="hero-meta__pill">{{ entry.capture_count }} capture{{ '' if entry.capture_count == 1 else 's' }}</span>
+        {% endif %}
+        {% if entry.atom_count %}
+        <span class="hero-meta__pill">{{ entry.atom_count }} atom{{ '' if entry.atom_count == 1 else 's' }}</span>
+        {% endif %}
+        {% if entry.artifact_count %}
+        <span class="hero-meta__pill">{{ entry.artifact_count }} artifact{{ '' if entry.artifact_count == 1 else 's' }}</span>
         {% endif %}
         {% elif entry_kind == 'capture' %}
         <span class="hero-meta__pill">{{ entry.display_type }}</span>
@@ -70,7 +101,7 @@
       </div>
 
       <div class="hero-actions">
-        <a class="button-secondary" href="./">Back to Gallery</a>
+        <a class="button-secondary" href="./">Back to Overview</a>
         {% if entry_kind in ('source', 'capture', 'artifact') and entry.public_url %}
         <a class="button-primary" href="{{ entry.public_url }}" target="_blank" rel="noreferrer">Open public link</a>
         {% endif %}
@@ -79,6 +110,7 @@
 
     <section class="detail-layout">
       <aside class="detail-aside">
+        {% if entry_kind != 'source' %}
         <article class="detail-panel">
           <h2 class="detail-panel__title">Metadata</h2>
           <dl class="detail-meta">
@@ -103,8 +135,9 @@
             {% endif %}
           </dl>
         </article>
+        {% endif %}
 
-        {% if entry.Domain %}
+        {% if entry.Domain and entry_kind != 'source' %}
         <article class="detail-panel">
           <h2 class="detail-panel__title">Domains</h2>
           <div class="related-links">
@@ -117,7 +150,7 @@
 
         {% if entry_kind == 'source' and entry.related_sources_info %}
         <article class="detail-panel">
-          <h2 class="detail-panel__title">Related Sources</h2>
+          <h2 class="detail-panel__title">Continue with</h2>
           <div class="detail-link-list">
             {% for item in entry.related_sources_info %}
             <a href="{{ item.url }}">{{ item.name }}</a>
@@ -128,7 +161,7 @@
 
         {% if entry_kind == 'source' and entry.atoms_info %}
         <article class="detail-panel">
-          <h2 class="detail-panel__title">Atoms</h2>
+          <h2 class="detail-panel__title">Key atoms</h2>
           <div class="detail-link-list">
             {% for item in entry.atoms_info %}
             <a href="{{ item.href }}">{{ item.title }}</a>
@@ -139,7 +172,7 @@
 
         {% if entry_kind == 'source' and entry.artifacts_info %}
         <article class="detail-panel">
-          <h2 class="detail-panel__title">Artifacts</h2>
+          <h2 class="detail-panel__title">Published outputs</h2>
           <div class="detail-link-list">
             {% for item in entry.artifacts_info %}
             <a href="{{ item.href }}">{{ item.title }}</a>
@@ -150,7 +183,7 @@
 
         {% if entry_kind == 'source' and entry.captures_info %}
         <article class="detail-panel">
-          <h2 class="detail-panel__title">Captures</h2>
+          <h2 class="detail-panel__title">Raw captures</h2>
           <div class="detail-link-list">
             {% for item in entry.captures_info %}
             <a href="{{ item.href }}">{{ item.title }}</a>
@@ -271,6 +304,14 @@
       </aside>
 
       <section class="detail-main">
+        {% if entry_kind == 'source' %}
+        <article class="detail-panel detail-panel--lead">
+          <h2 class="detail-panel__title">Why this source matters</h2>
+          <p class="detail-copy detail-copy--lead">{{ entry['Key Takeaway'] or 'This source anchors a live branch of the graph.' }}</p>
+          <p class="detail-copy">This page is meant to read like a research note with provenance. The structured links around it show how the source is being transformed into captures, atoms, and public artifacts.</p>
+        </article>
+        {% endif %}
+
         {% if entry_kind == 'capture' and entry.summary %}
         <article class="detail-panel">
           <h2 class="detail-panel__title">Extraction Summary</h2>
@@ -298,11 +339,15 @@
         {% endif %}
 
         <article class="detail-panel">
-          <h2 class="detail-panel__title">Contents</h2>
+          <h2 class="detail-panel__title">{% if entry_kind == 'source' %}Reading notes{% elif entry_kind == 'artifact' %}Artifact note{% elif entry_kind == 'atom' %}Atom note{% elif entry_kind == 'capture' %}Capture note{% else %}Contents{% endif %}</h2>
           {% if entry.content_html %}
           <div class="detail-prose">{{ entry.content_html }}</div>
           {% else %}
+          {% if entry_kind == 'source' %}
+          <p class="detail-copy">No long-form reading notes are synced for this source yet. For now, the working thesis, provenance, and linked graph around this source carry the page.</p>
+          {% else %}
           <p class="detail-copy">No Notion page body is synced yet for this item. The structured properties are still available above.</p>
+          {% endif %}
           {% endif %}
         </article>
       </section>

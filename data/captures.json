@@ -1,0 +1,126 @@
+[
+  {
+    "id": "33764dba-f92b-813e-9682-eeb263905a76",
+    "url": "https://www.notion.so/33764dbaf92b813e9682eeb263905a76",
+    "created_time": "2026-04-03T22:52:00.000Z",
+    "last_edited_time": "2026-04-03T22:52:00.000Z",
+    "Capture ID": "CAP-1",
+    "Name": "ICM as the paper's backbone assumption",
+    "Capture Type": "Rough Synthesis",
+    "Status": "Used",
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Source": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Spawned Atoms": [
+      "33764dba-f92b-8126-ac21-f0a470a1818b"
+    ],
+    "Artifacts": [
+      "33764dba-f92b-8189-9312-cb9e1d36c726"
+    ],
+    "Summary": "The paper treats independent causal mechanisms as the structural reason causal representations can generalize.",
+    "Excerpt": "The mechanisms of the causal generative model are autonomous and do not inform or influence each other.",
+    "Chapter/Section": "Sections 1-2",
+    "What Stuck": "ICM is not decoration in the paper; it is the actual hinge that connects causal theory to robust representation learning.",
+    "Why It Matters": "Without an explicit mechanism story, the representation-learning claim collapses back into pattern matching.",
+    "Capture URL": null,
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33764dba-f92b-81c3-bfa8-e632bc6caef6",
+    "url": "https://www.notion.so/33764dbaf92b81c3bfa8e632bc6caef6",
+    "created_time": "2026-04-03T22:53:00.000Z",
+    "last_edited_time": "2026-04-03T22:53:00.000Z",
+    "Capture ID": "CAP-2",
+    "Name": "Invariant features matter because environments change",
+    "Capture Type": "Highlight",
+    "Status": "Used",
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Source": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Spawned Atoms": [
+      "33764dba-f92b-8111-b435-f49447d94d2f"
+    ],
+    "Artifacts": [
+      "33764dba-f92b-8189-9312-cb9e1d36c726"
+    ],
+    "Summary": "The paper frames causal representations as the abstraction that survives domain shift when superficial correlations do not.",
+    "Excerpt": "Causal models can be seen as the correct abstraction level for generalizing across domains.",
+    "Chapter/Section": "Sections 1-2",
+    "What Stuck": "The representation problem is not just compression; it is choosing features that remain stable when the environment changes.",
+    "Why It Matters": "This is the core bridge from causal modeling to robust ML. It explains why invariance is the target rather than mere predictive fit.",
+    "Capture URL": null,
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33764dba-f92b-816e-8ad3-c94e7cd268a4",
+    "url": "https://www.notion.so/33764dbaf92b816e8ad3c94e7cd268a4",
+    "created_time": "2026-04-03T22:53:00.000Z",
+    "last_edited_time": "2026-04-03T22:53:00.000Z",
+    "Capture ID": "CAP-3",
+    "Name": "Disentanglement is too weak without causal assumptions",
+    "Capture Type": "Reflection",
+    "Status": "Used",
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Source": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Spawned Atoms": [
+      "33764dba-f92b-81e7-9a3d-d7a7d4020142"
+    ],
+    "Artifacts": [
+      "33764dba-f92b-8189-9312-cb9e1d36c726"
+    ],
+    "Summary": "The paper's critique is that statistical factorization alone cannot recover variables that support intervention and transfer.",
+    "Excerpt": "Without further assumptions, unsupervised disentanglement is fundamentally impossible.",
+    "Chapter/Section": "Sections 2-3",
+    "What Stuck": "A clean latent space is not the same thing as a causal one. Independence by itself does not give semantics.",
+    "Why It Matters": "This blocks a common shortcut in representation learning and forces the system toward structural assumptions instead of aesthetic latent spaces.",
+    "Capture URL": null,
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33764dba-f92b-812c-a114-c6d21800a919",
+    "url": "https://www.notion.so/33764dbaf92b812ca114c6d21800a919",
+    "created_time": "2026-04-03T22:53:00.000Z",
+    "last_edited_time": "2026-04-03T22:53:00.000Z",
+    "Capture ID": "CAP-4",
+    "Name": "Environment diversity is the real supervision signal",
+    "Capture Type": "Rough Synthesis",
+    "Status": "Used",
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Source": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Spawned Atoms": [
+      "33764dba-f92b-81d1-aefd-fe8357611ebe"
+    ],
+    "Artifacts": [
+      "33764dba-f92b-8189-9312-cb9e1d36c726"
+    ],
+    "Summary": "Multiple environments make causal learning possible because changes reveal which features are invariant and which are spurious.",
+    "Excerpt": "Distribution shifts correspond to local interventions on the causal model, providing a natural supervision signal.",
+    "Chapter/Section": "Sections 4-5",
+    "What Stuck": "Single-environment success is ambiguous; only cross-environment variation exposes the right abstraction.",
+    "Why It Matters": "This turns distribution shift from a nuisance into a learning signal and points to how datasets should be designed for causal representation learning.",
+    "Capture URL": null,
+    "content": [],
+    "content_plain": ""
+  }
+]

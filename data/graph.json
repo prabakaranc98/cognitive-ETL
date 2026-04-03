@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "ATM-1",
+      "id": "atom:ATM-1",
       "label": "Causal representations should be invariant across environments",
       "url": "atom-atm-1.html",
       "type": "atom",
@@ -14,7 +14,7 @@
       "reuse_count": 0
     },
     {
-      "id": "ATM-2",
+      "id": "atom:ATM-2",
       "label": "The Independent Causal Mechanisms principle: causal generative processes are modular and autonomous",
       "url": "atom-atm-2.html",
       "type": "atom",
@@ -26,7 +26,7 @@
       "reuse_count": 0
     },
     {
-      "id": "ATM-4",
+      "id": "atom:ATM-4",
       "label": "Multi-environment data provides the supervision signal for causal representation learning",
       "url": "atom-atm-4.html",
       "type": "atom",
@@ -39,7 +39,7 @@
       "reuse_count": 0
     },
     {
-      "id": "ATM-3",
+      "id": "atom:ATM-3",
       "label": "Disentanglement alone is insufficient without causal structure",
       "url": "atom-atm-3.html",
       "type": "atom",
@@ -52,7 +52,7 @@
       "reuse_count": 0
     },
     {
-      "id": "Thinking in Systems: A Primer",
+      "id": "source:SRC-3",
       "label": "Thinking in Systems: A Primer",
       "url": "source-src-3.html",
       "type": "source",
@@ -63,7 +63,7 @@
       ]
     },
     {
-      "id": "The Book of Why",
+      "id": "source:SRC-2",
       "label": "The Book of Why",
       "url": "source-src-2.html",
       "type": "source",
@@ -74,7 +74,7 @@
       ]
     },
     {
-      "id": "Toward Causal Representation Learning",
+      "id": "source:SRC-1",
       "label": "Toward Causal Representation Learning",
       "url": "source-src-1.html",
       "type": "source",
@@ -83,63 +83,208 @@
         "causal inference",
         "deep learning"
       ]
+    },
+    {
+      "id": "capture:CAP-1",
+      "label": "ICM as the paper's backbone assumption",
+      "url": "capture-cap-1.html",
+      "type": "capture",
+      "capture_type": "Rough Synthesis",
+      "status": "Used",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
+    },
+    {
+      "id": "capture:CAP-2",
+      "label": "Invariant features matter because environments change",
+      "url": "capture-cap-2.html",
+      "type": "capture",
+      "capture_type": "Highlight",
+      "status": "Used",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
+    },
+    {
+      "id": "capture:CAP-3",
+      "label": "Disentanglement is too weak without causal assumptions",
+      "url": "capture-cap-3.html",
+      "type": "capture",
+      "capture_type": "Reflection",
+      "status": "Used",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
+    },
+    {
+      "id": "capture:CAP-4",
+      "label": "Environment diversity is the real supervision signal",
+      "url": "capture-cap-4.html",
+      "type": "capture",
+      "capture_type": "Rough Synthesis",
+      "status": "Used",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
+    },
+    {
+      "id": "artifact:ART-1",
+      "label": "Toward CRL: Sch\u00f6lkopf et al. 2021 \u2014 Key Claims & Architecture",
+      "url": "artifact-art-1.html",
+      "type": "artifact",
+      "format": "Slide Deck",
+      "status": "Shipped",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
     }
   ],
   "edges": [
     {
-      "source": "The Book of Why",
-      "target": "Toward Causal Representation Learning",
+      "source": "source:SRC-2",
+      "target": "source:SRC-1",
       "type": "related_source"
     },
     {
-      "source": "ATM-1",
-      "target": "Toward Causal Representation Learning",
+      "source": "capture:CAP-1",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-1",
+      "target": "atom:ATM-2",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-1",
+      "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "capture:CAP-2",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-2",
+      "target": "atom:ATM-1",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-2",
+      "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "capture:CAP-3",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-3",
+      "target": "atom:ATM-3",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-3",
+      "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "capture:CAP-4",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-4",
+      "target": "atom:ATM-4",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-4",
+      "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "atom:ATM-1",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-1",
-      "target": "ATM-2",
+      "source": "atom:ATM-1",
+      "target": "atom:ATM-2",
       "type": "related"
     },
     {
-      "source": "ATM-1",
-      "target": "ATM-4",
+      "source": "atom:ATM-1",
+      "target": "atom:ATM-4",
       "type": "related"
     },
     {
-      "source": "ATM-2",
-      "target": "Toward Causal Representation Learning",
+      "source": "atom:ATM-2",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-2",
-      "target": "ATM-1",
+      "source": "atom:ATM-2",
+      "target": "atom:ATM-1",
       "type": "related"
     },
     {
-      "source": "ATM-4",
-      "target": "Toward Causal Representation Learning",
+      "source": "atom:ATM-4",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-4",
-      "target": "ATM-1",
+      "source": "atom:ATM-4",
+      "target": "atom:ATM-1",
       "type": "related"
     },
     {
-      "source": "ATM-3",
-      "target": "Toward Causal Representation Learning",
+      "source": "atom:ATM-3",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-3",
-      "target": "ATM-1",
+      "source": "atom:ATM-3",
+      "target": "atom:ATM-1",
       "type": "related"
     },
     {
-      "source": "ATM-3",
-      "target": "ATM-2",
+      "source": "atom:ATM-3",
+      "target": "atom:ATM-2",
       "type": "related"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-1",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-2",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-3",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-4",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "source:SRC-1",
+      "type": "artifact_from_source"
     }
   ]
 }

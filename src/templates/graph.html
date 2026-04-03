@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Knowledge Graph · {{ site_title }}</title>
+  <title>Graph · {{ site_title }}</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -16,21 +16,24 @@
         <span>{{ site_title }}</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="./">Gallery</a>
-        <a href="./captures.html">Captures</a>
+        <a href="./">Overview</a>
         <a href="./graph.html" class="active">Graph</a>
+        <a href="./#sources-list">Sources</a>
+        <a href="./captures.html">Captures</a>
         <a href="./atoms.html">Atoms</a>
+        <a href="./#artifacts-list">Artifacts</a>
       </nav>
     </div>
   </header>
 
-  <main class="container container--wide" id="main-content" style="padding-top: 40px; padding-bottom: 80px;">
+  <main class="container container--wide page-shell" id="main-content">
 
     <section class="section">
       <div class="section__header">
-        <h2 class="section__title">Knowledge Graph</h2>
+        <h2 class="section__title">Graph</h2>
         <span class="section__link">{{ stats.total_sources }} sources · {{ stats.total_captures }} captures · {{ stats.total_atoms }} atoms · {{ stats.total_artifacts }} artifacts · {{ graph_edge_count }} edges</span>
       </div>
+      <p class="section__note">This network shows how sources, captures, atoms, and artifacts relate. The visual emphasis stays quiet; the point is legibility, not spectacle.</p>
 
       <div class="insight-grid insight-grid--compact">
         <article class="panel">
@@ -82,19 +85,19 @@
       <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources, captures, atoms, and artifacts">
         <div class="graph-legend">
           <div class="graph-legend__item">
-            <span class="graph-legend__dot" style="background: #6EE7B7;"></span>
+            <span class="graph-legend__dot graph-legend__dot--source"></span>
             <span>Source</span>
           </div>
           <div class="graph-legend__item">
-            <span class="graph-legend__dot" style="background: #D2B26C;"></span>
+            <span class="graph-legend__dot graph-legend__dot--capture"></span>
             <span>Capture</span>
           </div>
           <div class="graph-legend__item">
-            <span class="graph-legend__dot" style="background: #E85D3A;"></span>
+            <span class="graph-legend__dot graph-legend__dot--atom"></span>
             <span>Atom</span>
           </div>
           <div class="graph-legend__item">
-            <span class="graph-legend__dot" style="background: #4E8C78;"></span>
+            <span class="graph-legend__dot graph-legend__dot--artifact"></span>
             <span>Artifact</span>
           </div>
           <div class="graph-legend__item">
@@ -110,7 +113,7 @@
         </div>
       </div>
 
-      <p style="text-align: center; margin-top: 16px; font-size: 0.8125rem; color: var(--text-tertiary);">
+      <p class="graph-note">
         Drag to reposition · Scroll to zoom · Click a node to open its detail page · Larger atom nodes = higher reuse count · Dashed links connect related sources
       </p>
     </section>

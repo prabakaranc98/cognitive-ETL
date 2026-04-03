@@ -4,6 +4,7 @@
     "url": "https://www.notion.so/Causal-representations-should-be-invariant-across-environments-33764dbaf92b8111b435f49447d94d2f",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
+    "Capture Context": [],
     "Source Quote": "Causal models can be seen as the correct abstraction level for generalizing across domains.",
     "Because": "The ICM principle states causal generative mechanisms are autonomous modules \u2014 changing one does not affect others. Representations aligned with these mechanisms inherit their invariance.",
     "Related Atoms": [
@@ -35,6 +36,7 @@
     "url": "https://www.notion.so/The-Independent-Causal-Mechanisms-principle-causal-generative-processes-are-modular-and-autonomous-33764dbaf92b8126ac21f0a470a1818b",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
+    "Capture Context": [],
     "Source Quote": "The mechanisms of the causal generative model are autonomous and do not inform or influence each other.",
     "Because": "Nature's generative process factorizes into independent modules corresponding to edges in the causal graph. This is a structural assumption about how the world generates data.",
     "Related Atoms": [
@@ -64,6 +66,7 @@
     "url": "https://www.notion.so/Multi-environment-data-provides-the-supervision-signal-for-causal-representation-learning-33764dbaf92b81d1aefdfe8357611ebe",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T21:12:00.000Z",
+    "Capture Context": [],
     "Source Quote": "Distribution shifts correspond to local interventions on the causal model, providing a natural supervision signal.",
     "Because": "Single-environment data is ambiguous \u2014 both causal and spurious features predict equally well. Multiple environments break this symmetry because only invariant features persist.",
     "Related Atoms": [
@@ -94,6 +97,7 @@
     "url": "https://www.notion.so/Disentanglement-alone-is-insufficient-without-causal-structure-33764dbaf92b81e79a3dd7a7d4020142",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
+    "Capture Context": [],
     "Source Quote": "Without further assumptions, unsupervised disentanglement is fundamentally impossible.",
     "Because": "Disentanglement methods optimize for statistical independence, but independent components can be rotated arbitrarily without changing the likelihood. Only causal structure breaks this symmetry.",
     "Related Atoms": [

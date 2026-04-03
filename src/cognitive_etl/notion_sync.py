@@ -580,7 +580,18 @@ def sync_notion(target: str | None = None) -> int:
         if not database_id:
             print(f"  [skip] {name}: database ID not set")
             continue
-        results[name] = sync_database(client, name, database_id)
+        try:
+            results[name] = sync_database(client, name, database_id)
+        except requests.HTTPError as exc:
+            status_code = exc.response.status_code if exc.response is not None else None
+            if status_code in {401, 403, 404}:
+                print(
+                    f"  [warn] {name}: unable to access database {database_id}. "
+                    "Check the database ID and share the database with your Notion integration. "
+                    "Keeping any existing local cache for this layer."
+                )
+                continue
+            raise
 
     for name, payload in results.items():
         output_path = DATA_DIR / f"{name}.json"

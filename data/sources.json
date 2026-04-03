@@ -20,6 +20,7 @@
     "Artifacts": [],
     "Date Added": null,
     "Key Takeaway": "Systems behavior emerges from structure (stocks, flows, feedback loops), not from the intent of individual agents.",
+    "Captures": [],
     "Name": "Thinking in Systems: A Primer",
     "content": [],
     "content_plain": ""
@@ -47,6 +48,7 @@
     "Artifacts": [],
     "Date Added": null,
     "Key Takeaway": "Causation requires a model; data alone cannot answer causal questions. The Ladder of Causation is the organizing framework.",
+    "Captures": [],
     "Name": "The Book of Why",
     "content": [],
     "content_plain": ""
@@ -81,6 +83,7 @@
     ],
     "Date Added": null,
     "Key Takeaway": "Causal models provide the right abstraction for robust, transferable representations \u2014 the ICM principle bridges causality and representation learning.",
+    "Captures": [],
     "Name": "Toward Causal Representation Learning",
     "content": [],
     "content_plain": ""

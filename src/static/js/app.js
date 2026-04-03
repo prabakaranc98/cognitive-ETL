@@ -60,6 +60,15 @@ async function initSearch() {
     const results = fuseInstance.search(query, { limit: 20 });
     renderSearchResults(results, resultsEl);
   });
+
+  document.querySelectorAll('[data-query]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const query = button.dataset.query || '';
+      searchInput.value = query;
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      searchInput.focus();
+    });
+  });
 }
 
 function renderSearchResults(results, container) {
@@ -142,9 +151,9 @@ async function initGraph() {
   const graph = await loadJSON('graph');
   if (!graph.nodes || !graph.nodes.length) {
     container.innerHTML = `
-      <div class="empty-state" style="color: var(--text-secondary);">
+      <div class="empty-state">
         <div class="empty-state__icon">🕸️</div>
-        <h3 class="empty-state__title" style="color: var(--text-primary);">Graph Empty</h3>
+        <h3 class="empty-state__title">Graph Empty</h3>
         <p class="empty-state__body">Add atoms to Notion and sync to see your knowledge graph.</p>
       </div>
     `;
@@ -168,15 +177,17 @@ function renderForceGraph(container, graph) {
   const width = container.clientWidth;
   const height = container.clientHeight;
   const styles = getComputedStyle(document.documentElement);
-  const labelColor = styles.getPropertyValue('--graph-label').trim() || 'rgba(26, 26, 30, 0.78)';
-  const edgeColor = styles.getPropertyValue('--graph-edge').trim() || '#C8C2B8';
-  const edgeStrongColor = styles.getPropertyValue('--graph-edge-strong').trim() || '#8B857C';
-  const nodeStroke = styles.getPropertyValue('--bg-card').trim() || '#FFFFFF';
-  const sourceRelationColor = styles.getPropertyValue('--accent-graph').trim() || '#6EE7B7';
-  const captureColor = '#D2B26C';
-  const artifactColor = '#4E8C78';
-  const captureEdgeColor = '#C29B52';
-  const artifactEdgeColor = '#7CA698';
+  const labelColor = styles.getPropertyValue('--graph-label').trim() || 'rgba(23, 19, 14, 0.82)';
+  const edgeColor = styles.getPropertyValue('--graph-edge').trim() || '#c7baa1';
+  const edgeStrongColor = styles.getPropertyValue('--graph-edge-strong').trim() || '#9f8563';
+  const nodeStroke = styles.getPropertyValue('--color-bg').trim() || '#f7f3ea';
+  const sourceRelationColor = styles.getPropertyValue('--accent-graph').trim() || '#7b6a52';
+  const sourceColor = styles.getPropertyValue('--color-source').trim() || '#7b6a52';
+  const captureColor = styles.getPropertyValue('--color-capture').trim() || '#a9854f';
+  const atomColor = styles.getPropertyValue('--color-atom').trim() || '#8f3e22';
+  const artifactColor = styles.getPropertyValue('--color-artifact').trim() || '#6f7b61';
+  const captureEdgeColor = '#b08f5e';
+  const artifactEdgeColor = '#8b9681';
 
   const svg = d3.select(container)
     .append('svg')
@@ -186,23 +197,23 @@ function renderForceGraph(container, graph) {
 
   // Colors by type
   const colorMap = {
-    atom: '#E85D3A',
-    source: '#6EE7B7',
+    atom: atomColor,
+    source: sourceColor,
     capture: captureColor,
     artifact: artifactColor,
   };
 
   const domainColors = {
-    'alignment': '#818CF8',
-    'causal inference': '#A78BFA',
-    'systems': '#34D399',
-    'RL': '#FB923C',
-    'deep learning': '#F87171',
-    'probability': '#F472B6',
-    'neuroscience': '#FBBF24',
-    'economics': '#A3A3A3',
-    'philosophy': '#94A3B8',
-    'complexity': '#67E8F9',
+    'alignment': '#7f6a56',
+    'causal inference': '#8f3e22',
+    'systems': '#6f7b61',
+    'RL': '#9d5d3a',
+    'deep learning': '#7a4e35',
+    'probability': '#8c6b4a',
+    'neuroscience': '#92754d',
+    'economics': '#6d6252',
+    'philosophy': '#746d63',
+    'complexity': '#89785d',
   };
 
   // Build simulation
@@ -291,7 +302,7 @@ function renderForceGraph(container, graph) {
       if (d.type === 'capture' || d.type === 'artifact') return 10;
       return 9;
     })
-    .attr('font-family', "'DM Sans', sans-serif")
+    .attr('font-family', styles.getPropertyValue('--font-mono').trim() || "'IBM Plex Mono', monospace")
     .attr('fill', labelColor)
     .attr('dx', d => d.type === 'source' ? 18 : 12)
     .attr('dy', 4);
@@ -347,21 +358,21 @@ function renderForceGraph(container, graph) {
 
 function applyLegendColors() {
   const domainColors = {
-    'alignment': '#818CF8',
-    'causal inference': '#A78BFA',
-    'systems': '#34D399',
-    'RL': '#FB923C',
-    'deep learning': '#F87171',
-    'probability': '#F472B6',
-    'neuroscience': '#FBBF24',
-    'economics': '#A3A3A3',
-    'philosophy': '#94A3B8',
-    'complexity': '#67E8F9',
+    'alignment': '#7f6a56',
+    'causal inference': '#8f3e22',
+    'systems': '#6f7b61',
+    'RL': '#9d5d3a',
+    'deep learning': '#7a4e35',
+    'probability': '#8c6b4a',
+    'neuroscience': '#92754d',
+    'economics': '#6d6252',
+    'philosophy': '#746d63',
+    'complexity': '#89785d',
   };
 
   document.querySelectorAll('[data-domain-color]').forEach((dot) => {
     const domain = dot.dataset.domainColor;
-    dot.style.background = domainColors[domain] || '#E85D3A';
+    dot.style.background = domainColors[domain] || '#8f3e22';
   });
 }
 

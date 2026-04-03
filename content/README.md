@@ -3,7 +3,7 @@
 Generated markdown exports for local reading, editing, and reuse.
 
 - Sources: 3
-- Captures: 0
+- Captures: 4
 - Atoms: 4
 - Artifacts: 1
 

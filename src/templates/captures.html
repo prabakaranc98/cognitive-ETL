@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capture Explorer · {{ site_title }}</title>
+  <title>Captures · {{ site_title }}</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -16,18 +16,20 @@
         <span>{{ site_title }}</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="./">Gallery</a>
-        <a href="./captures.html" class="active">Captures</a>
+        <a href="./">Overview</a>
         <a href="./graph.html">Graph</a>
+        <a href="./#sources-list">Sources</a>
+        <a href="./captures.html" class="active">Captures</a>
         <a href="./atoms.html">Atoms</a>
+        <a href="./#artifacts-list">Artifacts</a>
       </nav>
     </div>
   </header>
 
-  <main class="container" id="main-content" style="padding-top: 40px; padding-bottom: 80px;">
-    <section class="hero" style="padding: 40px 0 32px;">
-      <h1 class="hero__title">Capture Explorer</h1>
-      <p class="hero__subtitle">{{ captures | length }} capture{{ '' if captures | length == 1 else 's' }} in the system. This is the extraction layer between raw source material and reusable atoms.</p>
+  <main class="container page-shell" id="main-content">
+    <section class="hero">
+      <h1 class="hero__title">Captures</h1>
+      <p class="hero__subtitle">{{ captures | length }} capture{{ '' if captures | length == 1 else 's' }} in the system. This is the extraction layer between source material and reusable atoms.</p>
       <div class="hero-meta">
         <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
         <span class="hero-meta__pill">{{ stats.total_sources }} source{{ '' if stats.total_sources == 1 else 's' }}</span>
@@ -95,8 +97,8 @@
     {% else %}
     <div class="empty-state">
       <div class="empty-state__icon">📝</div>
-      <h3 class="empty-state__title">No captures yet</h3>
-      <p class="empty-state__body">Add excerpts, highlights, reactions, and fragments to make the extraction layer real.</p>
+      <h3 class="empty-state__title">Capture layer is still forming</h3>
+      <p class="empty-state__body">This is where highlights, fragments, and reactions will accumulate before they become cleaner atoms.</p>
     </div>
     {% endif %}
   </main>

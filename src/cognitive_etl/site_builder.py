@@ -449,6 +449,121 @@ def build_relation_items(
     ]
 
 
+def build_source_preview(record: dict[str, Any]) -> dict[str, str]:
+    return {
+        "title": record.get("Name", "Untitled"),
+        "href": record.get("detail_href", ""),
+        "content_path": record.get("content_path", ""),
+        "kicker": record.get("Author", ""),
+        "meta": record.get("progress_label", ""),
+        "summary": record.get("Key Takeaway", ""),
+    }
+
+
+def build_capture_preview(record: dict[str, Any]) -> dict[str, str]:
+    return {
+        "title": record.get("display_title", "Untitled Capture"),
+        "href": record.get("detail_href", ""),
+        "content_path": record.get("content_path", ""),
+        "kicker": record.get("display_type", "Capture"),
+        "meta": record.get("display_status", ""),
+        "summary": record.get("summary", ""),
+        "excerpt": first_text(record, "Excerpt"),
+        "support": first_text(record, "Why It Matters", "What Stuck"),
+    }
+
+
+def build_atom_preview(record: dict[str, Any]) -> dict[str, str]:
+    return {
+        "title": record.get("Claim", "Untitled Atom"),
+        "href": record.get("detail_href", ""),
+        "content_path": record.get("content_path", ""),
+        "kicker": record.get("Type", "atom"),
+        "meta": record.get("source_summary", ""),
+        "summary": record.get("Definition", ""),
+        "excerpt": record.get("Source Quote", ""),
+        "support": first_text(record, "Because", "Boundaries"),
+    }
+
+
+def build_artifact_preview(record: dict[str, Any]) -> dict[str, str]:
+    points = record.get("Points", 0) or 0
+    points_label = f"+{points} pts" if points else ""
+    return {
+        "title": record.get("Name", "Untitled Artifact"),
+        "href": record.get("detail_href", ""),
+        "content_path": record.get("content_path", ""),
+        "kicker": record.get("Format", "Artifact"),
+        "meta": record.get("Status", ""),
+        "summary": record.get("Chapter/Section", ""),
+        "support": points_label,
+    }
+
+
+def render_preview_cards_html(items: list[dict[str, str]]) -> str:
+    if not items:
+        return ""
+
+    fragments = ['<div class="note-stack">']
+    for item in items:
+        title = escape(item.get("title", "Untitled"))
+        href = escape(item.get("href", ""))
+        kicker = escape(item.get("kicker", ""))
+        meta = escape(item.get("meta", ""))
+        summary = escape(item.get("summary", ""))
+        excerpt = escape(item.get("excerpt", ""))
+        support = escape(item.get("support", ""))
+
+        fragments.append('<article class="note-preview">')
+        if kicker or meta:
+            meta_parts = " · ".join(part for part in (kicker, meta) if part)
+            fragments.append(f'<p class="note-preview__kicker">{meta_parts}</p>')
+        if href:
+            fragments.append(f'<h4 class="note-preview__title"><a href="{href}">{title}</a></h4>')
+        else:
+            fragments.append(f'<h4 class="note-preview__title">{title}</h4>')
+        if summary:
+            fragments.append(f'<p class="note-preview__body">{summary}</p>')
+        if excerpt:
+            fragments.append(f'<blockquote class="note-preview__quote">“{excerpt}”</blockquote>')
+        if support:
+            fragments.append(f'<p class="note-preview__support">{support}</p>')
+        fragments.append("</article>")
+
+    fragments.append("</div>")
+    return "".join(fragments)
+
+
+def render_preview_cards_markdown(items: list[dict[str, str]], current_content_path: str) -> str:
+    if not items:
+        return ""
+
+    current_dir = Path(current_content_path).parent
+    sections: list[str] = []
+
+    for item in items:
+        title = item.get("title", "Untitled")
+        content_path = item.get("content_path", "")
+        if content_path:
+            rel_path = Path(os.path.relpath(content_path, start=current_dir)).as_posix()
+            sections.append(f"### [{title}]({rel_path})")
+        else:
+            sections.append(f"### {title}")
+
+        meta = " · ".join(part for part in (item.get("kicker", ""), item.get("meta", "")) if part)
+        if meta:
+            sections.extend(["", meta])
+        if item.get("summary"):
+            sections.extend(["", item["summary"]])
+        if item.get("excerpt"):
+            sections.extend(["", f'> "{item["excerpt"]}"'])
+        if item.get("support"):
+            sections.extend(["", item["support"]])
+        sections.extend(["", ""])
+
+    return "\n".join(sections).strip()
+
+
 def render_content_html(blocks: list[dict[str, Any]]) -> str:
     if not blocks:
         return ""
@@ -660,13 +775,22 @@ def build_source_fallback_html(record: dict[str, Any]) -> str:
         sections.append(f"<p>{escape(record['Key Takeaway'])}</p>")
     if record.get("Author"):
         sections.append(f"<p><strong>Author:</strong> {escape(record['Author'])}</p>")
-    if record.get("captures_info"):
+    if record.get("captures_preview"):
+        sections.append("<h3>Raw captures</h3>")
+        sections.append(render_preview_cards_html(record["captures_preview"]))
+    elif record.get("captures_info"):
         sections.append("<h3>Captures</h3>")
         sections.append(build_link_list_html(record["captures_info"]))
-    if record.get("atoms_info"):
+    if record.get("atom_previews"):
+        sections.append("<h3>Key atoms</h3>")
+        sections.append(render_preview_cards_html(record["atom_previews"]))
+    elif record.get("atoms_info"):
         sections.append("<h3>Linked Atoms</h3>")
         sections.append(build_link_list_html(record["atoms_info"]))
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        sections.append("<h3>Published outputs</h3>")
+        sections.append(render_preview_cards_html(record["artifact_previews"]))
+    elif record.get("artifacts_info"):
         sections.append("<h3>Artifacts Built From This Source</h3>")
         sections.append(build_link_list_html(record["artifacts_info"]))
     return "".join(section for section in sections if section)
@@ -676,13 +800,26 @@ def build_capture_fallback_html(record: dict[str, Any]) -> str:
     sections: list[str] = []
     if record.get("summary"):
         sections.append(f"<p>{escape(record['summary'])}</p>")
-    if record.get("sources_info"):
+    if record.get("Excerpt"):
+        sections.append(f'<blockquote class="atom-card__quote">“{escape(record["Excerpt"])}”</blockquote>')
+    if first_text(record, "Why It Matters", "What Stuck"):
+        sections.append(f"<p>{escape(first_text(record, 'Why It Matters', 'What Stuck'))}</p>")
+    if record.get("source_previews"):
+        sections.append("<h3>Source context</h3>")
+        sections.append(render_preview_cards_html(record["source_previews"]))
+    elif record.get("sources_info"):
         sections.append("<h3>Source Context</h3>")
         sections.append(build_link_list_html(record["sources_info"]))
-    if record.get("atoms_info"):
+    if record.get("atom_previews"):
+        sections.append("<h3>Spawned atoms</h3>")
+        sections.append(render_preview_cards_html(record["atom_previews"]))
+    elif record.get("atoms_info"):
         sections.append("<h3>Spawned Atoms</h3>")
         sections.append(build_link_list_html(record["atoms_info"]))
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        sections.append("<h3>Used in artifacts</h3>")
+        sections.append(render_preview_cards_html(record["artifact_previews"]))
+    elif record.get("artifacts_info"):
         sections.append("<h3>Used In Artifacts</h3>")
         sections.append(build_link_list_html(record["artifacts_info"]))
     return "".join(section for section in sections if section)
@@ -692,13 +829,28 @@ def build_atom_fallback_html(record: dict[str, Any]) -> str:
     sections: list[str] = []
     if record.get("Definition"):
         sections.append(f"<p>{escape(record['Definition'])}</p>")
-    if record.get("captures_info"):
+    if record.get("Source Quote"):
+        sections.append(f'<blockquote class="atom-card__quote">“{escape(record["Source Quote"])}”</blockquote>')
+    if record.get("Because"):
+        sections.append(f"<p><strong>Because:</strong> {escape(record['Because'])}</p>")
+    if record.get("Boundaries"):
+        sections.append(f"<p><strong>Boundaries:</strong> {escape(record['Boundaries'])}</p>")
+    if record.get("capture_previews"):
+        sections.append("<h3>Capture context</h3>")
+        sections.append(render_preview_cards_html(record["capture_previews"]))
+    elif record.get("captures_info"):
         sections.append("<h3>Capture Context</h3>")
         sections.append(build_link_list_html(record["captures_info"]))
-    if record.get("sources_info"):
+    if record.get("source_previews"):
+        sections.append("<h3>Source grounding</h3>")
+        sections.append(render_preview_cards_html(record["source_previews"]))
+    elif record.get("sources_info"):
         sections.append("<h3>Source Context</h3>")
         sections.append(build_link_list_html(record["sources_info"]))
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        sections.append("<h3>Where this appears</h3>")
+        sections.append(render_preview_cards_html(record["artifact_previews"]))
+    elif record.get("artifacts_info"):
         sections.append("<h3>Used In Artifacts</h3>")
         sections.append(build_link_list_html(record["artifacts_info"]))
     return "".join(section for section in sections if section)
@@ -708,15 +860,24 @@ def build_artifact_fallback_html(record: dict[str, Any]) -> str:
     sections: list[str] = []
     if record.get("Chapter/Section"):
         sections.append(f"<p>{escape(record['Chapter/Section'])}</p>")
-    if record.get("captures_info"):
-        sections.append("<h3>Capture Context</h3>")
-        sections.append(build_link_list_html(record["captures_info"]))
-    if record.get("atoms_info"):
-        sections.append("<h3>Built From</h3>")
-        sections.append(build_link_list_html(record["atoms_info"]))
-    if record.get("sources_info"):
+    if record.get("source_previews"):
+        sections.append("<h3>Source grounding</h3>")
+        sections.append(render_preview_cards_html(record["source_previews"]))
+    elif record.get("sources_info"):
         sections.append("<h3>Source Material</h3>")
         sections.append(build_link_list_html(record["sources_info"]))
+    if record.get("atom_previews"):
+        sections.append("<h3>Core ideas in this artifact</h3>")
+        sections.append(render_preview_cards_html(record["atom_previews"]))
+    elif record.get("atoms_info"):
+        sections.append("<h3>Built From</h3>")
+        sections.append(build_link_list_html(record["atoms_info"]))
+    if record.get("capture_previews"):
+        sections.append("<h3>Supporting captures</h3>")
+        sections.append(render_preview_cards_html(record["capture_previews"]))
+    elif record.get("captures_info"):
+        sections.append("<h3>Capture Context</h3>")
+        sections.append(build_link_list_html(record["captures_info"]))
     return "".join(section for section in sections if section)
 
 
@@ -726,7 +887,11 @@ def build_source_fallback_markdown(record: dict[str, Any], current_content_path:
         sections.extend(["## Summary", "", record["Key Takeaway"], ""])
     if record.get("Author"):
         sections.extend(["## Author", "", record["Author"], ""])
-    if record.get("captures_info"):
+    if record.get("captures_preview"):
+        previews = render_preview_cards_markdown(record["captures_preview"], current_content_path)
+        if previews:
+            sections.extend(["## Raw Captures", "", previews, ""])
+    elif record.get("captures_info"):
         links = build_markdown_link_list(record["captures_info"], current_content_path)
         if links:
             sections.extend(["## Captures", "", links, ""])
@@ -734,11 +899,19 @@ def build_source_fallback_markdown(record: dict[str, Any], current_content_path:
         links = build_markdown_link_list(record["related_sources_info"], current_content_path)
         if links:
             sections.extend(["## Related Sources", "", links, ""])
-    if record.get("atoms_info"):
+    if record.get("atom_previews"):
+        previews = render_preview_cards_markdown(record["atom_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Key Atoms", "", previews, ""])
+    elif record.get("atoms_info"):
         links = build_markdown_link_list(record["atoms_info"], current_content_path)
         if links:
             sections.extend(["## Linked Atoms", "", links, ""])
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        previews = render_preview_cards_markdown(record["artifact_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Published Outputs", "", previews, ""])
+    elif record.get("artifacts_info"):
         links = build_markdown_link_list(record["artifacts_info"], current_content_path)
         if links:
             sections.extend(["## Artifacts", "", links, ""])
@@ -749,15 +922,31 @@ def build_capture_fallback_markdown(record: dict[str, Any], current_content_path
     sections: list[str] = []
     if record.get("summary"):
         sections.extend(["## Summary", "", record["summary"], ""])
-    if record.get("sources_info"):
+    if record.get("Excerpt"):
+        sections.extend(["## Excerpt", "", f'> "{record["Excerpt"]}"', ""])
+    if first_text(record, "Why It Matters", "What Stuck"):
+        sections.extend(["## Why It Matters", "", first_text(record, "Why It Matters", "What Stuck"), ""])
+    if record.get("source_previews"):
+        previews = render_preview_cards_markdown(record["source_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Source Context", "", previews, ""])
+    elif record.get("sources_info"):
         links = build_markdown_link_list(record["sources_info"], current_content_path)
         if links:
             sections.extend(["## Source Context", "", links, ""])
-    if record.get("atoms_info"):
+    if record.get("atom_previews"):
+        previews = render_preview_cards_markdown(record["atom_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Spawned Atoms", "", previews, ""])
+    elif record.get("atoms_info"):
         links = build_markdown_link_list(record["atoms_info"], current_content_path)
         if links:
             sections.extend(["## Spawned Atoms", "", links, ""])
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        previews = render_preview_cards_markdown(record["artifact_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Used In Artifacts", "", previews, ""])
+    elif record.get("artifacts_info"):
         links = build_markdown_link_list(record["artifacts_info"], current_content_path)
         if links:
             sections.extend(["## Used In Artifacts", "", links, ""])
@@ -774,11 +963,19 @@ def build_atom_fallback_markdown(record: dict[str, Any], current_content_path: s
         sections.extend(["## Because", "", record["Because"], ""])
     if record.get("Boundaries"):
         sections.extend(["## Boundaries", "", record["Boundaries"], ""])
-    if record.get("captures_info"):
+    if record.get("capture_previews"):
+        previews = render_preview_cards_markdown(record["capture_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Capture Context", "", previews, ""])
+    elif record.get("captures_info"):
         links = build_markdown_link_list(record["captures_info"], current_content_path)
         if links:
             sections.extend(["## Capture Context", "", links, ""])
-    if record.get("sources_info"):
+    if record.get("source_previews"):
+        previews = render_preview_cards_markdown(record["source_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Source Grounding", "", previews, ""])
+    elif record.get("sources_info"):
         links = build_markdown_link_list(record["sources_info"], current_content_path)
         if links:
             sections.extend(["## Source Context", "", links, ""])
@@ -786,7 +983,11 @@ def build_atom_fallback_markdown(record: dict[str, Any], current_content_path: s
         links = build_markdown_link_list(record["related_atoms_info"], current_content_path)
         if links:
             sections.extend(["## Related Atoms", "", links, ""])
-    if record.get("artifacts_info"):
+    if record.get("artifact_previews"):
+        previews = render_preview_cards_markdown(record["artifact_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Where This Appears", "", previews, ""])
+    elif record.get("artifacts_info"):
         links = build_markdown_link_list(record["artifacts_info"], current_content_path)
         if links:
             sections.extend(["## Used In Artifacts", "", links, ""])
@@ -797,18 +998,30 @@ def build_artifact_fallback_markdown(record: dict[str, Any], current_content_pat
     sections: list[str] = []
     if record.get("Chapter/Section"):
         sections.extend(["## Scope", "", record["Chapter/Section"], ""])
-    if record.get("captures_info"):
-        links = build_markdown_link_list(record["captures_info"], current_content_path)
-        if links:
-            sections.extend(["## Capture Context", "", links, ""])
-    if record.get("sources_info"):
+    if record.get("source_previews"):
+        previews = render_preview_cards_markdown(record["source_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Source Grounding", "", previews, ""])
+    elif record.get("sources_info"):
         links = build_markdown_link_list(record["sources_info"], current_content_path)
         if links:
             sections.extend(["## Source Material", "", links, ""])
-    if record.get("atoms_info"):
+    if record.get("atom_previews"):
+        previews = render_preview_cards_markdown(record["atom_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Core Ideas In This Artifact", "", previews, ""])
+    elif record.get("atoms_info"):
         links = build_markdown_link_list(record["atoms_info"], current_content_path)
         if links:
             sections.extend(["## Built From", "", links, ""])
+    if record.get("capture_previews"):
+        previews = render_preview_cards_markdown(record["capture_previews"], current_content_path)
+        if previews:
+            sections.extend(["## Supporting Captures", "", previews, ""])
+    elif record.get("captures_info"):
+        links = build_markdown_link_list(record["captures_info"], current_content_path)
+        if links:
+            sections.extend(["## Capture Context", "", links, ""])
     return "\n".join(section for section in sections if section is not None).strip()
 
 
@@ -1074,6 +1287,57 @@ def build_template_context() -> dict[str, Any]:
         atom_href_lookup,
         atom_content_lookup,
     )
+
+    source_preview_lookup = {record["id"]: build_source_preview(record) for record in enriched_sources}
+    capture_preview_lookup = {record["id"]: build_capture_preview(record) for record in enriched_captures}
+    atom_preview_lookup = {record["id"]: build_atom_preview(record) for record in enriched_atoms}
+    artifact_preview_lookup = {record["id"]: build_artifact_preview(record) for record in enriched_artifacts}
+
+    for record in enriched_sources:
+        capture_ids = source_capture_ids.get(record["id"], [])
+        atom_ids = record.get("Atoms") or []
+        artifact_ids = record.get("Artifacts") or []
+        record["captures_preview"] = [capture_preview_lookup[item_id] for item_id in capture_ids if item_id in capture_preview_lookup]
+        record["atom_previews"] = [atom_preview_lookup[item_id] for item_id in atom_ids if item_id in atom_preview_lookup]
+        record["artifact_previews"] = [artifact_preview_lookup[item_id] for item_id in artifact_ids if item_id in artifact_preview_lookup]
+        if not render_content_html(record.get("content") or []):
+            record["content_html"] = build_source_fallback_html(record)
+
+    for record in enriched_captures:
+        source_ids = capture_source_ids(record)
+        atom_ids = capture_atom_ids(record)
+        artifact_ids = capture_artifact_ids(record)
+        record["source_previews"] = [source_preview_lookup[item_id] for item_id in source_ids if item_id in source_preview_lookup]
+        record["atom_previews"] = [atom_preview_lookup[item_id] for item_id in atom_ids if item_id in atom_preview_lookup]
+        record["artifact_previews"] = [artifact_preview_lookup[item_id] for item_id in artifact_ids if item_id in artifact_preview_lookup]
+        if not render_content_html(record.get("content") or []):
+            record["content_html"] = build_capture_fallback_html(record)
+
+    for record in enriched_atoms:
+        source_ids = record.get("Source") or []
+        capture_ids = atom_capture_ids.get(record["id"], [])
+        artifact_ids = record.get("Used In Artifacts") or []
+        record["source_previews"] = [source_preview_lookup[item_id] for item_id in source_ids if item_id in source_preview_lookup]
+        record["capture_previews"] = [capture_preview_lookup[item_id] for item_id in capture_ids if item_id in capture_preview_lookup]
+        record["artifact_previews"] = [artifact_preview_lookup[item_id] for item_id in artifact_ids if item_id in artifact_preview_lookup]
+        record["related_atom_previews"] = [
+            atom_preview_lookup[item_id]
+            for item_id in (record.get("Related Atoms") or [])
+            if item_id in atom_preview_lookup and item_id != record["id"]
+        ]
+        if not render_content_html(record.get("content") or []):
+            record["content_html"] = build_atom_fallback_html(record)
+
+    for record in enriched_artifacts:
+        source_ids = record.get("Source") or []
+        capture_ids = artifact_capture_ids.get(record["id"], [])
+        atom_ids = record.get("Built From") or []
+        record["source_previews"] = [source_preview_lookup[item_id] for item_id in source_ids if item_id in source_preview_lookup]
+        record["capture_previews"] = [capture_preview_lookup[item_id] for item_id in capture_ids if item_id in capture_preview_lookup]
+        record["atom_previews"] = [atom_preview_lookup[item_id] for item_id in atom_ids if item_id in atom_preview_lookup]
+        if not render_content_html(record.get("content") or []):
+            record["content_html"] = build_artifact_fallback_html(record)
+
     source_pipeline = build_source_pipeline(sources)
     capture_pipeline = build_capture_pipeline(captures)
     domain_summary = build_domain_summary(stats)
