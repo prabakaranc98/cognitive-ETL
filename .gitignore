@@ -1,7 +1,5 @@
 # Project files
 .DS_Store
-data/*.json
-!data/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

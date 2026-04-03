@@ -1,0 +1,145 @@
+{
+  "nodes": [
+    {
+      "id": "ATM-1",
+      "label": "Causal representations should be invariant across environments",
+      "url": "atom-atm-1.html",
+      "type": "atom",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ],
+      "confidence": "4 - Strong",
+      "atom_type": "concept",
+      "reuse_count": 0
+    },
+    {
+      "id": "ATM-2",
+      "label": "The Independent Causal Mechanisms principle: causal generative processes are modular and autonomous",
+      "url": "atom-atm-2.html",
+      "type": "atom",
+      "domain": [
+        "causal inference"
+      ],
+      "confidence": "5 - Certain",
+      "atom_type": "mechanism",
+      "reuse_count": 0
+    },
+    {
+      "id": "ATM-4",
+      "label": "Multi-environment data provides the supervision signal for causal representation learning",
+      "url": "atom-atm-4.html",
+      "type": "atom",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ],
+      "confidence": "4 - Strong",
+      "atom_type": "mechanism",
+      "reuse_count": 0
+    },
+    {
+      "id": "ATM-3",
+      "label": "Disentanglement alone is insufficient without causal structure",
+      "url": "atom-atm-3.html",
+      "type": "atom",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ],
+      "confidence": "5 - Certain",
+      "atom_type": "critique",
+      "reuse_count": 0
+    },
+    {
+      "id": "Thinking in Systems: A Primer",
+      "label": "Thinking in Systems: A Primer",
+      "url": "source-src-3.html",
+      "type": "source",
+      "source_type": "Book",
+      "domain": [
+        "systems",
+        "complexity"
+      ]
+    },
+    {
+      "id": "The Book of Why",
+      "label": "The Book of Why",
+      "url": "source-src-2.html",
+      "type": "source",
+      "source_type": "Book",
+      "domain": [
+        "causal inference",
+        "philosophy"
+      ]
+    },
+    {
+      "id": "Toward Causal Representation Learning",
+      "label": "Toward Causal Representation Learning",
+      "url": "source-src-1.html",
+      "type": "source",
+      "source_type": "Paper",
+      "domain": [
+        "causal inference",
+        "deep learning"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "The Book of Why",
+      "target": "Toward Causal Representation Learning",
+      "type": "related_source"
+    },
+    {
+      "source": "ATM-1",
+      "target": "Toward Causal Representation Learning",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-1",
+      "target": "ATM-2",
+      "type": "related"
+    },
+    {
+      "source": "ATM-1",
+      "target": "ATM-4",
+      "type": "related"
+    },
+    {
+      "source": "ATM-2",
+      "target": "Toward Causal Representation Learning",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-2",
+      "target": "ATM-1",
+      "type": "related"
+    },
+    {
+      "source": "ATM-4",
+      "target": "Toward Causal Representation Learning",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-4",
+      "target": "ATM-1",
+      "type": "related"
+    },
+    {
+      "source": "ATM-3",
+      "target": "Toward Causal Representation Learning",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-3",
+      "target": "ATM-1",
+      "type": "related"
+    },
+    {
+      "source": "ATM-3",
+      "target": "ATM-2",
+      "type": "related"
+    }
+  ]
+}

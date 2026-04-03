@@ -1,0 +1,31 @@
+[
+  {
+    "id": "33764dba-f92b-8189-9312-cb9e1d36c726",
+    "url": "https://www.notion.so/Toward-CRL-Sch-lkopf-et-al-2021-Key-Claims-Architecture-33764dbaf92b81899312cb9e1d36c726",
+    "created_time": "2026-04-03T19:36:00.000Z",
+    "last_edited_time": "2026-04-03T19:36:00.000Z",
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Built From": [
+      "33764dba-f92b-8111-b435-f49447d94d2f",
+      "33764dba-f92b-8126-ac21-f0a470a1818b",
+      "33764dba-f92b-81e7-9a3d-d7a7d4020142",
+      "33764dba-f92b-81d1-aefd-fe8357611ebe"
+    ],
+    "Format": "Slide Deck",
+    "Status": "Shipped",
+    "Points": 18,
+    "Chapter/Section": "Full paper: Sections 1-6 covering ICM, disentanglement critique, multi-env supervision, and CRL roadmap",
+    "Source": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Artifact ID": "ART-1",
+    "Artifact URL": null,
+    "Date Shipped": "2026-04-03",
+    "Name": "Toward CRL: Sch\u00f6lkopf et al. 2021 \u2014 Key Claims & Architecture",
+    "content": [],
+    "content_plain": ""
+  }
+]

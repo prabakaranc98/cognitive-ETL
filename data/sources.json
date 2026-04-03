@@ -1,0 +1,88 @@
+[
+  {
+    "id": "33764dba-f92b-81a2-9730-e7255175f3b0",
+    "url": "https://www.notion.so/Thinking-in-Systems-A-Primer-33764dbaf92b81a29730e7255175f3b0",
+    "created_time": "2026-04-03T19:33:00.000Z",
+    "last_edited_time": "2026-04-03T19:33:00.000Z",
+    "Source ID": "SRC-3",
+    "Type": "Book",
+    "Chapters Processed": 0,
+    "Domain": [
+      "systems",
+      "complexity"
+    ],
+    "Author": "Donella Meadows",
+    "Source URL": null,
+    "Related Sources": [],
+    "Atoms": [],
+    "Status": "Queue",
+    "Total Chapters": 8,
+    "Artifacts": [],
+    "Date Added": null,
+    "Key Takeaway": "Systems behavior emerges from structure (stocks, flows, feedback loops), not from the intent of individual agents.",
+    "Name": "Thinking in Systems: A Primer",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33764dba-f92b-81a5-bb86-f0477cc08a67",
+    "url": "https://www.notion.so/The-Book-of-Why-33764dbaf92b81a5bb86f0477cc08a67",
+    "created_time": "2026-04-03T19:33:00.000Z",
+    "last_edited_time": "2026-04-03T19:33:00.000Z",
+    "Source ID": "SRC-2",
+    "Type": "Book",
+    "Chapters Processed": 0,
+    "Domain": [
+      "causal inference",
+      "philosophy"
+    ],
+    "Author": "Judea Pearl & Dana Mackenzie",
+    "Source URL": null,
+    "Related Sources": [
+      "33764dba-f92b-81ec-b91d-cd41ccf3b0b8"
+    ],
+    "Atoms": [],
+    "Status": "Reading",
+    "Total Chapters": 10,
+    "Artifacts": [],
+    "Date Added": null,
+    "Key Takeaway": "Causation requires a model; data alone cannot answer causal questions. The Ladder of Causation is the organizing framework.",
+    "Name": "The Book of Why",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33764dba-f92b-81ec-b91d-cd41ccf3b0b8",
+    "url": "https://www.notion.so/Toward-Causal-Representation-Learning-33764dbaf92b81ecb91dcd41ccf3b0b8",
+    "created_time": "2026-04-03T19:33:00.000Z",
+    "last_edited_time": "2026-04-03T19:33:00.000Z",
+    "Source ID": "SRC-1",
+    "Type": "Paper",
+    "Chapters Processed": 1,
+    "Domain": [
+      "causal inference",
+      "deep learning"
+    ],
+    "Author": "Sch\u00f6lkopf, Locatello, Bauer, Ke, Kalchbrenner, Goyal, Bengio (2021)",
+    "Source URL": "https://arxiv.org/abs/2102.11107",
+    "Related Sources": [
+      "33764dba-f92b-81a5-bb86-f0477cc08a67"
+    ],
+    "Atoms": [
+      "33764dba-f92b-8111-b435-f49447d94d2f",
+      "33764dba-f92b-8126-ac21-f0a470a1818b",
+      "33764dba-f92b-81e7-9a3d-d7a7d4020142",
+      "33764dba-f92b-81d1-aefd-fe8357611ebe"
+    ],
+    "Status": "Done",
+    "Total Chapters": 1,
+    "Artifacts": [
+      "33764dba-f92b-8189-9312-cb9e1d36c726"
+    ],
+    "Date Added": null,
+    "Key Takeaway": "Causal models provide the right abstraction for robust, transferable representations \u2014 the ICM principle bridges causality and representation learning.",
+    "Name": "Toward Causal Representation Learning",
+    "content": [],
+    "content_plain": ""
+  }
+]

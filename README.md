@@ -235,6 +235,7 @@ This rebuilds two outputs:
 
 - `dist/` for the static site
 - `content/` for local markdown exports
+- `data/` remains the checked-in machine-readable cache that the Pages deploy builds from
 
 ### 3. Useful Commands
 
