@@ -37,37 +37,38 @@
       </div>
     </section>
 
-    <div class="search-box">
-      <label class="sr-only" for="search-input">Search captures</label>
-      <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input class="search-box__input" id="search-input" type="text" placeholder="Search captures…">
-    </div>
-    <div id="search-results" aria-live="polite"></div>
+    <section class="section section-shell section-shell--capture">
+      <div class="search-box search-box--collection">
+        <label class="sr-only" for="search-input">Search captures</label>
+        <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-box__input" id="search-input" type="text" placeholder="Search captures…">
+      </div>
+      <div id="search-results" aria-live="polite"></div>
 
-    {% set all_domains = [] %}
-    {% for capture in captures %}
-      {% for d in (capture.Domain or []) %}
-        {% if d not in all_domains %}
-          {% if all_domains.append(d) %}{% endif %}
-        {% endif %}
-      {% endfor %}
-    {% endfor %}
-
-    {% if all_domains %}
-    <div class="filter-bar">
-      <button class="filter-btn active" data-domain="all" aria-pressed="true">All</button>
-      {% for domain in all_domains | sort %}
-      <button class="filter-btn" data-domain="{{ domain }}" aria-pressed="false">{{ domain }}</button>
-      {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if captures %}
-    <div class="card-grid">
+      {% set all_domains = [] %}
       {% for capture in captures %}
-      <article class="card card--interactive" data-domains="{{ (capture.Domain or []) | join(',') }}">
+        {% for d in (capture.Domain or []) %}
+          {% if d not in all_domains %}
+            {% if all_domains.append(d) %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% if all_domains %}
+      <div class="filter-bar filter-bar--collection">
+        <button class="filter-btn active" data-domain="all" aria-pressed="true">All</button>
+        {% for domain in all_domains | sort %}
+        <button class="filter-btn" data-domain="{{ domain }}" aria-pressed="false">{{ domain }}</button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if captures %}
+      <div class="card-grid">
+        {% for capture in captures %}
+        <article class="card card--interactive card--capture" data-domains="{{ (capture.Domain or []) | join(',') }}">
         <span class="card__badge">{{ capture.display_type }}</span>
         <h3 class="card__title">{{ capture.display_title }}</h3>
         {% if capture.summary %}
@@ -91,16 +92,17 @@
           <a class="card__action card__action--subtle" href="{{ capture.public_url }}" target="_blank" rel="noreferrer">Public link</a>
           {% endif %}
         </div>
-      </article>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-      <div class="empty-state__icon">📝</div>
-      <h3 class="empty-state__title">Capture layer is still forming</h3>
-      <p class="empty-state__body">This is where highlights, fragments, and reactions will accumulate before they become cleaner atoms.</p>
-    </div>
-    {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state__icon">📝</div>
+        <h3 class="empty-state__title">Capture layer is still forming</h3>
+        <p class="empty-state__body">This is where highlights, fragments, and reactions will accumulate before they become cleaner atoms.</p>
+      </div>
+      {% endif %}
+    </section>
   </main>
 
   <footer class="site-footer">

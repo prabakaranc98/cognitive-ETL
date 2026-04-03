@@ -83,7 +83,10 @@ function renderSearchResults(results, container) {
   container.innerHTML = results.map(r => {
     const item = r.item;
     const href = item.href ? escapeHtml(item.href) : '';
-    const openTag = href ? `<a class="card card--interactive card--search" href="${href}">` : '<div class="card">';
+    const typeClass = item.type ? ` card--${escapeHtml(item.type)}` : '';
+    const openTag = href
+      ? `<a class="card card--interactive card--search${typeClass}" href="${href}">`
+      : `<div class="card card--search${typeClass}">`;
     const closeTag = href ? '</a>' : '</div>';
     return `
       ${openTag}
