@@ -66,7 +66,7 @@
       {% endif %}
 
       {% if captures %}
-      <div class="card-grid">
+      <div class="card-grid card-grid--balanced card-grid--captures">
         {% for capture in captures %}
         <article class="card card--interactive card--capture" data-domains="{{ (capture.Domain or []) | join(',') }}">
         <span class="card__badge">{{ capture.display_type }}</span>

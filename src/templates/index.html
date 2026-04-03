@@ -190,7 +190,7 @@
           <p class="section__note">Public outputs are the clearest proof that the system is producing reusable work, not just storing notes.</p>
 
           {% if artifacts %}
-          <div class="card-grid">
+          <div class="card-grid card-grid--balanced card-grid--artifacts">
             {% for artifact in artifacts %}
             <article class="card card--interactive card--artifact" data-domains="{{ (artifact.Domain or []) | join(',') }}">
               <span class="card__badge">{{ artifact.Format or 'Artifact' }}</span>
@@ -278,7 +278,7 @@
       <p class="section__note">The library layer tracks provenance and reading progress. Inputs stay visible, but outputs stay primary.</p>
 
       {% if sources %}
-      <div class="card-grid">
+      <div class="card-grid card-grid--balanced card-grid--sources">
         {% for source in sources %}
         <article class="card card--interactive card--source" data-domains="{{ (source.Domain or []) | join(',') }}">
           <span class="card__badge">{{ source.Type or 'Source' }}</span>
@@ -338,7 +338,7 @@
       <p class="section__note">Captures are deliberately rough. They hold highlights, questions, excerpts, and fragments before compression.</p>
 
       {% if captures %}
-      <div class="card-grid">
+      <div class="card-grid card-grid--balanced card-grid--captures">
         {% for capture in captures[:6] %}
         <article class="card card--interactive card--capture" data-domains="{{ (capture.Domain or []) | join(',') }}">
           <span class="card__badge">{{ capture.display_type }}</span>
