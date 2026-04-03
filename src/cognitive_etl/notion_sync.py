@@ -205,6 +205,61 @@ def flatten_content_text(blocks: list[dict[str, Any]]) -> str:
     return "\n".join(part for part in parts if part).strip()
 
 
+def first_text(record: dict[str, Any], *keys: str) -> str:
+    for key in keys:
+        value = record.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def relation_ids(record: dict[str, Any], *keys: str) -> list[str]:
+    for key in keys:
+        value = record.get(key)
+        if isinstance(value, list) and value:
+            return value
+    return []
+
+
+def capture_identifier(capture: dict[str, Any]) -> str:
+    return str(capture.get("Capture ID") or capture.get("id", ""))
+
+
+def capture_title(capture: dict[str, Any]) -> str:
+    return first_text(capture, "Name", "Title", "Capture", "Excerpt") or "Untitled Capture"
+
+
+def capture_type(capture: dict[str, Any]) -> str:
+    return first_text(capture, "Capture Type", "Type") or "Capture"
+
+
+def capture_status(capture: dict[str, Any]) -> str:
+    return first_text(capture, "Status", "Stage") or "Inbox"
+
+
+def capture_source_ids(capture: dict[str, Any]) -> list[str]:
+    return relation_ids(capture, "Source", "Sources")
+
+
+def capture_atom_ids(capture: dict[str, Any]) -> list[str]:
+    return relation_ids(capture, "Spawned Atoms", "Atoms")
+
+
+def capture_artifact_ids(capture: dict[str, Any]) -> list[str]:
+    return relation_ids(capture, "Artifacts", "Used In Artifacts")
+
+
+def graph_node_id(kind: str, record: dict[str, Any]) -> str:
+    identifier_map = {
+        "source": record.get("Source ID") or record.get("id", ""),
+        "capture": capture_identifier(record),
+        "atom": record.get("Atom ID") or record.get("id", ""),
+        "artifact": record.get("Artifact ID") or record.get("id", ""),
+    }
+    identifier = str(identifier_map.get(kind, record.get("id", "")))
+    return f"{kind}:{identifier}"
+
+
 def sync_database(client: NotionClient, name: str, database_id: str) -> list[dict[str, Any]]:
     print(f"  [sync] {name}")
     pages = client.query_database(database_id)
@@ -238,17 +293,48 @@ def build_related_source_map(sources: list[dict[str, Any]]) -> dict[str, set[str
 
 def resolve_relations(
     sources: list[dict[str, Any]],
+    captures: list[dict[str, Any]],
     atoms: list[dict[str, Any]],
     artifacts: list[dict[str, Any]],
 ) -> dict[str, list[dict[str, Any]]]:
     source_lookup = {source["id"]: source.get("Name", "Unknown") for source in sources}
+    capture_lookup = {capture["id"]: capture_title(capture) for capture in captures}
     atom_lookup = {atom["id"]: atom.get("Claim", "Unknown") for atom in atoms}
     artifact_lookup = {artifact["id"]: artifact.get("Name", "Unknown") for artifact in artifacts}
     related_source_map = build_related_source_map(sources)
+    atom_node_lookup = {atom["id"]: graph_node_id("atom", atom) for atom in atoms}
+    artifact_node_lookup = {artifact["id"]: graph_node_id("artifact", artifact) for artifact in artifacts}
+    source_node_lookup = {source["id"]: graph_node_id("source", source) for source in sources}
+
+    captures_by_source: dict[str, list[str]] = {source["id"]: [] for source in sources}
+    captures_by_atom: dict[str, list[str]] = {atom["id"]: [] for atom in atoms}
+    captures_by_artifact: dict[str, list[str]] = {artifact["id"]: [] for artifact in artifacts}
 
     for source in sources:
         related_ids = sorted(related_source_map.get(source["id"], set()), key=lambda item: source_lookup.get(item, item))
         source["_related_source_names"] = [source_lookup.get(source_id, source_id) for source_id in related_ids]
+
+    for capture in captures:
+        source_ids = capture_source_ids(capture)
+        atom_ids = capture_atom_ids(capture)
+        artifact_ids = capture_artifact_ids(capture)
+
+        capture["_source_names"] = [source_lookup.get(source_id, source_id) for source_id in source_ids]
+        capture["_atom_claims"] = [atom_lookup.get(atom_id, atom_id) for atom_id in atom_ids]
+        capture["_artifact_names"] = [artifact_lookup.get(artifact_id, artifact_id) for artifact_id in artifact_ids]
+
+        for source_id in source_ids:
+            if source_id in captures_by_source:
+                captures_by_source[source_id].append(capture_lookup[capture["id"]])
+        for atom_id in atom_ids:
+            if atom_id in captures_by_atom:
+                captures_by_atom[atom_id].append(capture_lookup[capture["id"]])
+        for artifact_id in artifact_ids:
+            if artifact_id in captures_by_artifact:
+                captures_by_artifact[artifact_id].append(capture_lookup[capture["id"]])
+
+    for source in sources:
+        source["_capture_titles"] = captures_by_source.get(source["id"], [])
 
     for atom in atoms:
         source_ids = atom.get("Source", []) or []
@@ -256,55 +342,117 @@ def resolve_relations(
         artifact_ids = atom.get("Used In Artifacts", []) or []
 
         atom["_source_names"] = [source_lookup.get(source_id, source_id) for source_id in source_ids]
+        atom["_capture_titles"] = captures_by_atom.get(atom["id"], [])
         atom["_related_claims"] = [atom_lookup.get(atom_id, atom_id) for atom_id in related_ids]
         atom["_artifact_names"] = [artifact_lookup.get(artifact_id, artifact_id) for artifact_id in artifact_ids]
 
     for artifact in artifacts:
         built_from_ids = artifact.get("Built From", []) or []
         source_ids = artifact.get("Source", []) or []
+        artifact["_capture_titles"] = captures_by_artifact.get(artifact["id"], [])
         artifact["_atom_claims"] = [atom_lookup.get(atom_id, atom_id) for atom_id in built_from_ids]
         artifact["_source_names"] = [source_lookup.get(source_id, source_id) for source_id in source_ids]
 
     edges: list[dict[str, Any]] = []
     seen_source_edges: set[tuple[str, str]] = set()
     for source in sources:
-        source_name = source_lookup.get(source["id"], source["id"])
+        source_key = source_node_lookup.get(source["id"], source["id"])
         for related_id in related_source_map.get(source["id"], set()):
-            related_name = source_lookup.get(related_id, related_id)
-            edge_key = tuple(sorted((source_name, related_name)))
-            if source_name == related_name or edge_key in seen_source_edges:
+            related_key = source_node_lookup.get(related_id, related_id)
+            edge_key = tuple(sorted((source_key, related_key)))
+            if source_key == related_key or edge_key in seen_source_edges:
                 continue
             seen_source_edges.add(edge_key)
             edges.append(
                 {
-                    "source": source_name,
-                    "target": related_name,
+                    "source": source_key,
+                    "target": related_key,
                     "type": "related_source",
                 }
             )
 
-    for atom in atoms:
-        atom_id = atom.get("Atom ID", atom["id"])
+    for capture in captures:
+        capture_key = graph_node_id("capture", capture)
 
-        for source_id in atom.get("Source", []) or []:
+        for source_id in capture_source_ids(capture):
+            if source_id not in source_node_lookup:
+                continue
             edges.append(
                 {
-                    "source": atom_id,
-                    "target": source_lookup.get(source_id, source_id),
+                    "source": capture_key,
+                    "target": source_node_lookup[source_id],
+                    "type": "captured_from_source",
+                }
+            )
+
+        for atom_id in capture_atom_ids(capture):
+            if atom_id not in atom_node_lookup:
+                continue
+            edges.append(
+                {
+                    "source": capture_key,
+                    "target": atom_node_lookup[atom_id],
+                    "type": "capture_to_atom",
+                }
+            )
+
+        for artifact_id in capture_artifact_ids(capture):
+            if artifact_id not in artifact_node_lookup:
+                continue
+            edges.append(
+                {
+                    "source": capture_key,
+                    "target": artifact_node_lookup[artifact_id],
+                    "type": "capture_to_artifact",
+                }
+            )
+
+    for atom in atoms:
+        atom_key = atom_node_lookup[atom["id"]]
+
+        for source_id in atom.get("Source", []) or []:
+            if source_id not in source_node_lookup:
+                continue
+            edges.append(
+                {
+                    "source": atom_key,
+                    "target": source_node_lookup[source_id],
                     "type": "from_source",
                 }
             )
 
         for related_id in atom.get("Related Atoms", []) or []:
-            related_atom_id = next(
-                (candidate.get("Atom ID", candidate["id"]) for candidate in atoms if candidate["id"] == related_id),
-                related_id,
-            )
+            related_atom_id = atom_node_lookup.get(related_id, related_id)
             edges.append(
                 {
-                    "source": atom_id,
+                    "source": atom_key,
                     "target": related_atom_id,
                     "type": "related",
+                }
+            )
+
+    for artifact in artifacts:
+        artifact_key = artifact_node_lookup[artifact["id"]]
+
+        for atom_id in artifact.get("Built From", []) or []:
+            if atom_id not in atom_node_lookup:
+                continue
+            edges.append(
+                {
+                    "source": artifact_key,
+                    "target": atom_node_lookup[atom_id],
+                    "type": "artifact_from_atom",
+                }
+            )
+
+        for source_id in artifact.get("Source", []) or []:
+            if source_id not in source_node_lookup:
+                continue
+            edges.append(
+                {
+                    "source": artifact_key,
+                    "target": source_node_lookup[source_id],
+                    "type": "artifact_from_source",
                 }
             )
 
@@ -312,7 +460,7 @@ def resolve_relations(
     for atom in atoms:
         nodes.append(
             {
-                "id": atom.get("Atom ID", atom["id"]),
+                "id": atom_node_lookup[atom["id"]],
                 "label": atom.get("Claim", "?"),
                 "url": build_detail_href("atom", atom),
                 "type": "atom",
@@ -326,7 +474,7 @@ def resolve_relations(
     for source in sources:
         nodes.append(
             {
-                "id": source.get("Name", source["id"]),
+                "id": source_node_lookup[source["id"]],
                 "label": source.get("Name", "?"),
                 "url": build_detail_href("source", source),
                 "type": "source",
@@ -335,11 +483,38 @@ def resolve_relations(
             }
         )
 
+    for capture in captures:
+        nodes.append(
+            {
+                "id": graph_node_id("capture", capture),
+                "label": capture_title(capture),
+                "url": build_detail_href("capture", capture),
+                "type": "capture",
+                "capture_type": capture_type(capture),
+                "status": capture_status(capture),
+                "domain": capture.get("Domain", []),
+            }
+        )
+
+    for artifact in artifacts:
+        nodes.append(
+            {
+                "id": artifact_node_lookup[artifact["id"]],
+                "label": artifact.get("Name", "?"),
+                "url": build_detail_href("artifact", artifact),
+                "type": "artifact",
+                "format": artifact.get("Format"),
+                "status": artifact.get("Status"),
+                "domain": artifact.get("Domain", []),
+            }
+        )
+
     return {"nodes": nodes, "edges": edges}
 
 
 def build_stats(
     sources: list[dict[str, Any]],
+    captures: list[dict[str, Any]],
     atoms: list[dict[str, Any]],
     artifacts: list[dict[str, Any]],
 ) -> dict[str, Any]:
@@ -351,9 +526,13 @@ def build_stats(
     for atom in atoms:
         for domain in atom.get("Domain", []) or []:
             domains[domain] = domains.get(domain, 0) + 1
+    for capture in captures:
+        for domain in capture.get("Domain", []) or []:
+            domains[domain] = domains.get(domain, 0) + 1
 
     return {
         "total_sources": len(sources),
+        "total_captures": len(captures),
         "total_atoms": len(atoms),
         "total_artifacts": len(artifacts),
         "shipped_artifacts": len(shipped_artifacts),
@@ -368,6 +547,14 @@ def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2, default=str)
+
+
+def load_json(path: Path, default: Any) -> Any:
+    if not path.exists():
+        return default
+
+    with path.open(encoding="utf-8") as handle:
+        return json.load(handle)
 
 
 def sync_notion(target: str | None = None) -> int:
@@ -400,14 +587,18 @@ def sync_notion(target: str | None = None) -> int:
         write_json(output_path, payload)
         print(f"  [write] {output_path}")
 
-    if all(name in results for name in ("sources", "atoms", "artifacts")):
-        graph = resolve_relations(results["sources"], results["atoms"], results["artifacts"])
-        write_json(DATA_DIR / "graph.json", graph)
-        print(f"  [write] {DATA_DIR / 'graph.json'}")
+    sources = results.get("sources", load_json(DATA_DIR / "sources.json", []))
+    captures = results.get("captures", load_json(DATA_DIR / "captures.json", []))
+    atoms = results.get("atoms", load_json(DATA_DIR / "atoms.json", []))
+    artifacts = results.get("artifacts", load_json(DATA_DIR / "artifacts.json", []))
 
-        stats = build_stats(results["sources"], results["atoms"], results["artifacts"])
-        write_json(DATA_DIR / "stats.json", stats)
-        print(f"  [write] {DATA_DIR / 'stats.json'}")
+    graph = resolve_relations(sources, captures, atoms, artifacts)
+    write_json(DATA_DIR / "graph.json", graph)
+    print(f"  [write] {DATA_DIR / 'graph.json'}")
+
+    stats = build_stats(sources, captures, atoms, artifacts)
+    write_json(DATA_DIR / "stats.json", stats)
+    print(f"  [write] {DATA_DIR / 'stats.json'}")
 
     print("=" * 40)
     print("Sync complete.")
@@ -418,7 +609,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Sync Cognitive ETL data from Notion.")
     parser.add_argument(
         "--db",
-        choices=("sources", "atoms", "artifacts"),
+        choices=("sources", "captures", "atoms", "artifacts"),
         help="Sync only a single database.",
     )
     return parser

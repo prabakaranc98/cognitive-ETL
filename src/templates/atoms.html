@@ -17,6 +17,7 @@
       </a>
       <nav class="site-nav" aria-label="Primary">
         <a href="./">Gallery</a>
+        <a href="./captures.html">Captures</a>
         <a href="./graph.html">Graph</a>
         <a href="./atoms.html" class="active">Atoms</a>
       </nav>
@@ -27,9 +28,10 @@
 
     <section class="hero" style="padding: 40px 0 32px;">
       <h1 class="hero__title">Atom Explorer</h1>
-      <p class="hero__subtitle">{{ atoms | length }} atomic claims in the knowledge graph. Each one a defensible idea with provenance, boundaries, and reuse potential.</p>
+      <p class="hero__subtitle">{{ atoms | length }} atomic claims in the knowledge graph. Each one a defensible idea with provenance, boundaries, reuse potential, and now explicit capture context.</p>
       <div class="hero-meta">
         <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
+        <span class="hero-meta__pill">{{ stats.total_captures }} capture{{ '' if stats.total_captures == 1 else 's' }} upstream</span>
         <span class="hero-meta__pill">{{ stats.total_artifacts }} artifact{{ '' if stats.total_artifacts == 1 else 's' }} built so far</span>
       </div>
     </section>
@@ -94,6 +96,7 @@
         {% endif %}
         <div class="card__details">
           <span>{{ atom.source_summary }}</span>
+          <span>{{ atom.capture_count }} capture{{ '' if atom.capture_count == 1 else 's' }}</span>
           <span>{{ atom.related_count }} related atom{{ '' if atom.related_count == 1 else 's' }}</span>
           <span>{{ atom.artifact_count }} artifact{{ '' if atom.artifact_count == 1 else 's' }}</span>
         </div>
@@ -105,7 +108,7 @@
           </div>
           <div class="atom-card__actions">
             <span class="atom-card__reuse">{% if atom['Reuse Count'] %}↻ {{ atom['Reuse Count'] | int }}{% else %}new{% endif %}</span>
-            <a class="card__action card__action--subtle" href="{{ atom.notion_url }}" target="_blank" rel="noreferrer">Open</a>
+            <a class="card__action card__action--subtle" href="{{ atom.detail_href }}">Open</a>
           </div>
         </div>
       </article>

@@ -17,6 +17,7 @@
       </a>
       <nav class="site-nav" aria-label="Primary">
         <a href="./">Gallery</a>
+        <a href="./captures.html">Captures</a>
         <a href="./graph.html" class="active">Graph</a>
         <a href="./atoms.html">Atoms</a>
       </nav>
@@ -28,7 +29,7 @@
     <section class="section">
       <div class="section__header">
         <h2 class="section__title">Knowledge Graph</h2>
-        <span class="section__link">{{ stats.total_atoms }} atoms · {{ stats.total_sources }} sources · {{ graph_edge_count }} edges</span>
+        <span class="section__link">{{ stats.total_sources }} sources · {{ stats.total_captures }} captures · {{ stats.total_atoms }} atoms · {{ stats.total_artifacts }} artifacts · {{ graph_edge_count }} edges</span>
       </div>
 
       <div class="insight-grid insight-grid--compact">
@@ -45,6 +46,10 @@
             <div class="pipeline-list__item">
               <span class="pipeline-list__label">Atoms</span>
               <span class="pipeline-list__count">{{ stats.total_atoms }}</span>
+            </div>
+            <div class="pipeline-list__item">
+              <span class="pipeline-list__label">Captures</span>
+              <span class="pipeline-list__count">{{ stats.total_captures }}</span>
             </div>
             <div class="pipeline-list__item">
               <span class="pipeline-list__label">Edges</span>
@@ -74,15 +79,23 @@
         </article>
       </div>
 
-      <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources and atoms">
+      <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources, captures, atoms, and artifacts">
         <div class="graph-legend">
           <div class="graph-legend__item">
             <span class="graph-legend__dot" style="background: #6EE7B7;"></span>
             <span>Source</span>
           </div>
           <div class="graph-legend__item">
+            <span class="graph-legend__dot" style="background: #D2B26C;"></span>
+            <span>Capture</span>
+          </div>
+          <div class="graph-legend__item">
             <span class="graph-legend__dot" style="background: #E85D3A;"></span>
             <span>Atom</span>
+          </div>
+          <div class="graph-legend__item">
+            <span class="graph-legend__dot" style="background: #4E8C78;"></span>
+            <span>Artifact</span>
           </div>
           <div class="graph-legend__item">
             <span class="graph-legend__line graph-legend__line--source"></span>
@@ -98,7 +111,7 @@
       </div>
 
       <p style="text-align: center; margin-top: 16px; font-size: 0.8125rem; color: var(--text-tertiary);">
-        Drag to reposition · Scroll to zoom · Click a node to open its Notion page · Larger nodes = higher reuse count · Dashed links connect related sources
+        Drag to reposition · Scroll to zoom · Click a node to open its detail page · Larger atom nodes = higher reuse count · Dashed links connect related sources
       </p>
     </section>
 

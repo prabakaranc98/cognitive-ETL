@@ -17,6 +17,7 @@ def resolve_path(env_var: str, default: Path) -> Path:
 
 DATA_DIR = resolve_path("COGNITIVE_ETL_DATA_DIR", ROOT_DIR / "data")
 DIST_DIR = resolve_path("COGNITIVE_ETL_DIST_DIR", ROOT_DIR / "dist")
+CONTENT_DIR = resolve_path("COGNITIVE_ETL_CONTENT_DIR", ROOT_DIR / "content")
 TEMPLATE_DIR = SRC_DIR / "templates"
 STATIC_DIR = SRC_DIR / "static"
 ENV_FILE = ROOT_DIR / ".env"
@@ -68,6 +69,7 @@ def get_notion_config() -> NotionConfig:
         base_url="https://api.notion.com/v1",
         database_ids={
             "sources": os.getenv("SOURCES_DB_ID"),
+            "captures": os.getenv("CAPTURES_DB_ID"),
             "atoms": os.getenv("ATOMS_DB_ID"),
             "artifacts": os.getenv("ARTIFACTS_DB_ID"),
         },

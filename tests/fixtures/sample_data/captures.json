@@ -1,0 +1,14 @@
+[
+  {
+    "id": "capture-1",
+    "Capture ID": "CAP-1",
+    "Name": "Scholkopf excerpt on invariance",
+    "Capture Type": "Excerpt",
+    "Status": "Distilling",
+    "Summary": "A preserved fragment on mechanisms that survive distribution shifts across environments.",
+    "Domain": ["causal inference"],
+    "Source": ["source-1"],
+    "Spawned Atoms": ["atom-1"],
+    "Artifacts": ["artifact-1"]
+  }
+]

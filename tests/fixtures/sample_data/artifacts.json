@@ -7,6 +7,8 @@
     "Domain": ["causal inference", "systems"],
     "Format": "Slides",
     "Status": "Shipped",
-    "Points": 18
+    "Points": 18,
+    "Source": ["source-1"],
+    "Built From": ["atom-1", "atom-2"]
   }
 ]

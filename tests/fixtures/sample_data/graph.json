@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "ATM-1",
+      "id": "atom:ATM-1",
       "label": "Causal invariance is what lets a model travel across environments.",
       "type": "atom",
       "domain": ["causal inference"],
@@ -10,7 +10,7 @@
       "reuse_count": 2
     },
     {
-      "id": "ATM-2",
+      "id": "atom:ATM-2",
       "label": "Interventions reveal structure that correlations alone can hide.",
       "type": "atom",
       "domain": ["causal inference", "systems"],
@@ -19,27 +19,68 @@
       "reuse_count": 1
     },
     {
-      "id": "Scholkopf et al. 2021",
+      "id": "source:SRC-1",
       "label": "Scholkopf et al. 2021",
       "type": "source",
       "source_type": "Paper",
       "domain": ["causal inference"]
+    },
+    {
+      "id": "capture:CAP-1",
+      "label": "Scholkopf excerpt on invariance",
+      "type": "capture",
+      "capture_type": "Excerpt",
+      "status": "Distilling",
+      "domain": ["causal inference"]
+    },
+    {
+      "id": "artifact:ART-1",
+      "label": "Causal Invariance in 5 Slides",
+      "type": "artifact",
+      "format": "Slides",
+      "status": "Shipped",
+      "domain": ["causal inference", "systems"]
     }
   ],
   "edges": [
     {
-      "source": "ATM-1",
-      "target": "Scholkopf et al. 2021",
+      "source": "capture:CAP-1",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-1",
+      "target": "atom:ATM-1",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "atom:ATM-1",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-2",
-      "target": "Scholkopf et al. 2021",
+      "source": "atom:ATM-2",
+      "target": "source:SRC-1",
       "type": "from_source"
     },
     {
-      "source": "ATM-1",
-      "target": "ATM-2",
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-1",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "atom:ATM-2",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-1",
+      "target": "source:SRC-1",
+      "type": "artifact_from_source"
+    },
+    {
+      "source": "atom:ATM-1",
+      "target": "atom:ATM-2",
       "type": "related"
     }
   ]

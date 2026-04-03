@@ -27,9 +27,10 @@ jobs:
       SOURCES_DB_ID: ${{ secrets.SOURCES_DB_ID }}
       ATOMS_DB_ID: ${{ secrets.ATOMS_DB_ID }}
       ARTIFACTS_DB_ID: ${{ secrets.ARTIFACTS_DB_ID }}
+      CAPTURES_DB_ID: ${{ secrets.CAPTURES_DB_ID }}
       SITE_TITLE: Cognitive ETL
       SITE_AUTHOR: Prabakaran Chandran
-      SITE_URL: ${{ vars.SITE_URL }}
+      SITE_URL: https://prabakaranc98.github.io/cogETL
       SITE_DESCRIPTION: A knowledge graph that compounds.
 
     steps:
@@ -51,8 +52,26 @@ jobs:
       - name: Run smoke tests
         run: ./scripts/cognitive_etl.sh test
 
-      - name: Refresh data and storefront
-        run: ./scripts/cognitive_etl.sh refresh
+      - name: Validate deploy configuration
+        run: |
+          test -n "$NOTION_API_KEY"
+          test -n "$SOURCES_DB_ID"
+          test -n "$ATOMS_DB_ID"
+          test -n "$ARTIFACTS_DB_ID"
+
+      - name: Sync Notion data
+        run: ./scripts/cognitive_etl.sh sync
+
+      - name: Build storefront
+        run: ./scripts/cognitive_etl.sh build
+
+      - name: Verify Pages bundle
+        run: |
+          test -f dist/index.html
+          test -f dist/captures.html
+          test -f dist/graph.html
+          test -f dist/atoms.html
+          test -f dist/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

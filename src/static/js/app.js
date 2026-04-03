@@ -69,12 +69,12 @@ function renderSearchResults(results, container) {
     return;
   }
 
-  const typeIcons = { atom: '⚛️', artifact: '📦', source: '📚' };
+  const typeIcons = { atom: '⚛️', artifact: '📦', source: '📚', capture: '📝' };
   
   container.innerHTML = results.map(r => {
     const item = r.item;
     const href = item.href ? escapeHtml(item.href) : '';
-    const openTag = href ? `<a class="card card--interactive card--search" href="${href}" target="_blank" rel="noreferrer">` : '<div class="card">';
+    const openTag = href ? `<a class="card card--interactive card--search" href="${href}">` : '<div class="card">';
     const closeTag = href ? '</a>' : '</div>';
     return `
       ${openTag}
@@ -142,9 +142,9 @@ async function initGraph() {
   const graph = await loadJSON('graph');
   if (!graph.nodes || !graph.nodes.length) {
     container.innerHTML = `
-      <div class="empty-state" style="color: rgba(255,255,255,0.5);">
+      <div class="empty-state" style="color: var(--text-secondary);">
         <div class="empty-state__icon">🕸️</div>
-        <h3 class="empty-state__title" style="color: rgba(255,255,255,0.7);">Graph Empty</h3>
+        <h3 class="empty-state__title" style="color: var(--text-primary);">Graph Empty</h3>
         <p class="empty-state__body">Add atoms to Notion and sync to see your knowledge graph.</p>
       </div>
     `;
@@ -167,6 +167,16 @@ async function initGraph() {
 function renderForceGraph(container, graph) {
   const width = container.clientWidth;
   const height = container.clientHeight;
+  const styles = getComputedStyle(document.documentElement);
+  const labelColor = styles.getPropertyValue('--graph-label').trim() || 'rgba(26, 26, 30, 0.78)';
+  const edgeColor = styles.getPropertyValue('--graph-edge').trim() || '#C8C2B8';
+  const edgeStrongColor = styles.getPropertyValue('--graph-edge-strong').trim() || '#8B857C';
+  const nodeStroke = styles.getPropertyValue('--bg-card').trim() || '#FFFFFF';
+  const sourceRelationColor = styles.getPropertyValue('--accent-graph').trim() || '#6EE7B7';
+  const captureColor = '#D2B26C';
+  const artifactColor = '#4E8C78';
+  const captureEdgeColor = '#C29B52';
+  const artifactEdgeColor = '#7CA698';
 
   const svg = d3.select(container)
     .append('svg')
@@ -178,6 +188,8 @@ function renderForceGraph(container, graph) {
   const colorMap = {
     atom: '#E85D3A',
     source: '#6EE7B7',
+    capture: captureColor,
+    artifact: artifactColor,
   };
 
   const domainColors = {
@@ -197,11 +209,21 @@ function renderForceGraph(container, graph) {
   const simulation = d3.forceSimulation(graph.nodes)
     .force('link', d3.forceLink(graph.edges)
       .id(d => d.id)
-      .distance(80)
-      .strength(0.3))
+      .distance(d => {
+        if (d.type === 'related_source') return 120;
+        if (d.type === 'capture_to_atom' || d.type === 'captured_from_source') return 95;
+        if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return 90;
+        return 80;
+      })
+      .strength(d => d.type === 'related_source' ? 0.18 : 0.32))
     .force('charge', d3.forceManyBody().strength(-200))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collision', d3.forceCollide().radius(d => d.type === 'source' ? 20 : 12));
+    .force('collision', d3.forceCollide().radius(d => {
+      if (d.type === 'source') return 20;
+      if (d.type === 'capture') return 16;
+      if (d.type === 'artifact') return 14;
+      return 12 + (d.reuse_count || 0);
+    }));
 
   // Edges
   const link = svg.append('g')
@@ -209,15 +231,23 @@ function renderForceGraph(container, graph) {
     .data(graph.edges)
     .join('line')
     .attr('stroke', d => {
-      if (d.type === 'related_source') return '#6EE7B7';
-      return d.type === 'related' ? '#4A4A55' : '#2A2A35';
+      if (d.type === 'related_source') return sourceRelationColor;
+      if (d.type === 'captured_from_source' || d.type === 'capture_to_atom') return captureEdgeColor;
+      if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return artifactEdgeColor;
+      return d.type === 'related' ? edgeStrongColor : edgeColor;
     })
     .attr('stroke-width', d => {
       if (d.type === 'related_source') return 2;
-      return d.type === 'related' ? 1.5 : 1;
+      if (d.type === 'capture_to_atom' || d.type === 'captured_from_source') return 1.5;
+      if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return 1.4;
+      return d.type === 'related' ? 1.6 : 1.2;
     })
-    .attr('stroke-dasharray', d => d.type === 'related_source' ? '6 4' : null)
-    .attr('stroke-opacity', 0.5);
+    .attr('stroke-dasharray', d => {
+      if (d.type === 'related_source') return '6 4';
+      if (d.type === 'artifact_from_source') return '3 3';
+      return null;
+    })
+    .attr('stroke-opacity', d => d.type === 'related_source' ? 0.85 : 0.78);
 
   // Nodes
   const node = svg.append('g')
@@ -226,19 +256,23 @@ function renderForceGraph(container, graph) {
     .join('circle')
     .attr('r', d => {
       if (d.type === 'source') return 14;
+      if (d.type === 'capture') return 10;
+      if (d.type === 'artifact') return 9;
       return 6 + (d.reuse_count || 0) * 2;
     })
     .attr('fill', d => {
       if (d.type === 'source') return colorMap.source;
+      if (d.type === 'capture') return colorMap.capture;
+      if (d.type === 'artifact') return colorMap.artifact;
       const primaryDomain = (d.domain || [])[0];
       return domainColors[primaryDomain] || colorMap.atom;
     })
-    .attr('stroke', '#1A1A1E')
+    .attr('stroke', nodeStroke)
     .attr('stroke-width', 1.5)
     .style('cursor', 'pointer')
     .on('click', (_, d) => {
       if (d.url) {
-        window.open(d.url, '_blank', 'noopener');
+        window.location.href = d.url;
       }
     })
     .call(d3.drag()
@@ -252,9 +286,13 @@ function renderForceGraph(container, graph) {
     .data(graph.nodes)
     .join('text')
     .text(d => d.label.length > 30 ? d.label.slice(0, 30) + '…' : d.label)
-    .attr('font-size', d => d.type === 'source' ? 11 : 9)
+    .attr('font-size', d => {
+      if (d.type === 'source') return 11;
+      if (d.type === 'capture' || d.type === 'artifact') return 10;
+      return 9;
+    })
     .attr('font-family', "'DM Sans', sans-serif")
-    .attr('fill', 'rgba(255,255,255,0.7)')
+    .attr('fill', labelColor)
     .attr('dx', d => d.type === 'source' ? 18 : 12)
     .attr('dy', 4);
 

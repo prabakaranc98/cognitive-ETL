@@ -17,7 +17,7 @@ Usage:
 
 Commands:
   test      Run local smoke tests.
-  sync      Pull fresh data from Notion using .env credentials.
+  sync      Pull fresh data from Notion using configured env values or .env.
   build     Rebuild the static storefront into dist/.
   refresh   Run test + sync + build.
   serve     Serve dist/ locally on 127.0.0.1. Default port: 4323.
@@ -27,17 +27,29 @@ EOF
 
 env_value() {
   local key="$1"
-  awk -F= -v key="$key" '$1 == key { print substr($0, index($0, "=") + 1) }' .env
+  local env_current="${!key:-}"
+  if [[ -n "$env_current" ]]; then
+    printf '%s\n' "$env_current"
+    return 0
+  fi
+
+  if [[ -f .env ]]; then
+    awk -F= -v key="$key" '$1 == key { print substr($0, index($0, "=") + 1) }' .env
+  fi
 }
 
 require_env() {
-  if [[ ! -f .env ]]; then
-    echo "Missing .env. Copy .env.example to .env first." >&2
-    exit 1
-  fi
+  local missing=()
 
-  if [[ -z "$(env_value NOTION_API_KEY)" ]]; then
-    echo "Missing NOTION_API_KEY in .env." >&2
+  for key in NOTION_API_KEY SOURCES_DB_ID ATOMS_DB_ID ARTIFACTS_DB_ID; do
+    if [[ -z "$(env_value "$key")" ]]; then
+      missing+=("$key")
+    fi
+  done
+
+  if (( ${#missing[@]} > 0 )); then
+    echo "Missing required configuration: ${missing[*]}" >&2
+    echo "Provide them via .env or exported environment variables." >&2
     exit 1
   fi
 }

@@ -11,7 +11,6 @@
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="container site-header__inner">
       <a href="./" class="site-logo" aria-label="{{ site_title }} home">
@@ -20,6 +19,7 @@
       </a>
       <nav class="site-nav" aria-label="Primary">
         <a href="./" class="active">Gallery</a>
+        <a href="./captures.html">Captures</a>
         <a href="./graph.html">Graph</a>
         <a href="./atoms.html">Atoms</a>
       </nav>
@@ -27,28 +27,31 @@
   </header>
 
   <main class="container" id="main-content">
-
-    <!-- Hero -->
     <section class="hero">
-      <h1 class="hero__title">Extract. Transform. <em>Load.</em></h1>
+      <h1 class="hero__title">Extract. Capture. Transform. <em>Load.</em></h1>
       <p class="hero__subtitle">{{ site_description }}</p>
       <div class="hero-meta">
         <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
-        <span class="hero-meta__pill">{{ stats.total_sources }} active sources</span>
+        <span class="hero-meta__pill">{{ stats.total_sources }} sources</span>
+        <span class="hero-meta__pill">{{ stats.total_captures }} captures</span>
+        <span class="hero-meta__pill">{{ stats.total_atoms }} atoms</span>
         <span class="hero-meta__pill">{{ stats.shipped_artifacts }} shipped artifact{{ '' if stats.shipped_artifacts == 1 else 's' }}</span>
       </div>
       <div class="hero-actions">
         <a class="button-primary" href="./graph.html">Explore Graph</a>
-        <a class="button-secondary" href="./atoms.html">Browse Atoms</a>
-        <a class="button-secondary" href="#sources">Source Queue</a>
+        <a class="button-secondary" href="./captures.html">Browse Captures</a>
+        <a class="button-secondary" href="#sources-list">Browse Sources</a>
       </div>
     </section>
 
-    <!-- Stats -->
     <section class="stats-bar">
       <div class="stat">
         <div class="stat__value">{{ stats.total_sources }}</div>
         <div class="stat__label">Sources</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">{{ stats.total_captures }}</div>
+        <div class="stat__label">Captures</div>
       </div>
       <div class="stat">
         <div class="stat__value">{{ stats.total_atoms }}</div>
@@ -68,11 +71,40 @@
       </div>
     </section>
 
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">How This Works</h2>
+        <span class="section__link">Public knowledge ETL</span>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <span class="card__badge">1. Source</span>
+          <h3 class="card__title">Something worth learning from</h3>
+          <p class="card__body">Books, papers, talks, conversations, and other inputs enter here with status, domain, progress, and provenance.</p>
+        </article>
+        <article class="card">
+          <span class="card__badge">2. Capture</span>
+          <h3 class="card__title">The first extraction surface</h3>
+          <p class="card__body">Highlights, fragments, reactions, excerpts, and rough synthesis get preserved before they are compressed into cleaner ideas.</p>
+        </article>
+        <article class="card">
+          <span class="card__badge">3. Atom</span>
+          <h3 class="card__title">Reusable unit of thought</h3>
+          <p class="card__body">Atoms hold claims, mechanisms, boundaries, and provenance so the graph compounds instead of turning into a stack of summaries.</p>
+        </article>
+        <article class="card">
+          <span class="card__badge">4. Artifact</span>
+          <h3 class="card__title">Public-facing output</h3>
+          <p class="card__body">Slides, notes, and other public artifacts turn internal learning into something legible and useful for anyone else.</p>
+        </article>
+      </div>
+    </section>
+
     <section class="insight-grid">
       <article class="panel">
         <div class="section__header section__header--compact">
-          <h2 class="section__title">Pipeline</h2>
-          <span class="section__link">Current source flow</span>
+          <h2 class="section__title">Source Flow</h2>
+          <span class="section__link">What is being worked through</span>
         </div>
         <div class="pipeline-list">
           {% for item in source_pipeline %}
@@ -86,8 +118,23 @@
 
       <article class="panel">
         <div class="section__header section__header--compact">
+          <h2 class="section__title">Capture Flow</h2>
+          <span class="section__link">Extraction before abstraction</span>
+        </div>
+        <div class="pipeline-list">
+          {% for item in capture_pipeline %}
+          <div class="pipeline-list__item">
+            <span class="pipeline-list__label">{{ item.label }}</span>
+            <span class="pipeline-list__count">{{ item.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="section__header section__header--compact">
           <h2 class="section__title">Domains</h2>
-          <span class="section__link">Graph concentration</span>
+          <span class="section__link">Where the graph is densest</span>
         </div>
         {% if domain_summary %}
         <div class="domain-list">
@@ -99,7 +146,7 @@
           {% endfor %}
         </div>
         {% else %}
-        <p class="panel__empty">No domain data yet. Sync atoms to see the graph distribution.</p>
+        <p class="panel__empty">No domain data yet. Sync captures and atoms to see the distribution.</p>
         {% endif %}
       </article>
     </section>
@@ -116,17 +163,28 @@
           <span class="tag">+{{ latest_artifact.Points }} pts</span>
         </div>
         <div class="card__actions">
-          <a class="card__action" href="{{ latest_artifact.external_url }}" target="_blank" rel="noreferrer">Open artifact</a>
+          <a class="card__action" href="{{ latest_artifact.detail_href }}">Open artifact</a>
         </div>
       </article>
       {% endif %}
 
       <article class="spotlight-card spotlight-card--subtle">
-        <p class="spotlight-card__eyebrow">Reading now</p>
-        {% if active_reads %}
+        <p class="spotlight-card__eyebrow">Latest capture</p>
+        {% if latest_capture %}
+        <h2 class="spotlight-card__title">{{ latest_capture.display_title }}</h2>
+        <p class="spotlight-card__body">{{ latest_capture.summary or latest_capture.source_summary }}</p>
+        <div class="card__meta">
+          <span class="tag tag--accent">{{ latest_capture.display_type }}</span>
+          <span class="tag">{{ latest_capture.display_status }}</span>
+          <span class="tag">{{ latest_capture.source_summary }}</span>
+        </div>
+        <div class="card__actions">
+          <a class="card__action" href="{{ latest_capture.detail_href }}">Open capture</a>
+        </div>
+        {% elif active_reads %}
         <div class="stack-list">
           {% for source in active_reads %}
-          <a class="stack-list__item" href="{{ source.notion_url }}" target="_blank" rel="noreferrer">
+          <a class="stack-list__item" href="{{ source.detail_href }}">
             <span>
               <strong>{{ source.Name }}</strong>
               <small>{{ source.progress_label }} · {{ source.Status }}</small>
@@ -135,29 +193,22 @@
           </a>
           {% endfor %}
         </div>
-        {% elif latest_source %}
-        <p class="spotlight-card__body">{{ latest_source.Name }} is the newest source in the pipeline.</p>
-        <div class="card__actions">
-          <a class="card__action card__action--subtle" href="{{ latest_source.notion_url }}" target="_blank" rel="noreferrer">Open latest source</a>
-        </div>
         {% else %}
-        <p class="spotlight-card__body">Add your next source in Notion to start the loop.</p>
+        <p class="spotlight-card__body">Add captures in Notion to preserve rough extraction before it becomes clean atoms.</p>
         {% endif %}
       </article>
     </section>
 
-    <!-- Search -->
     <div class="search-box">
-      <label class="sr-only" for="search-input">Search atoms, artifacts, and sources</label>
+      <label class="sr-only" for="search-input">Search captures, atoms, artifacts, and sources</label>
       <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input class="search-box__input" id="search-input" type="text" placeholder="Search atoms, artifacts, sources…">
+      <input class="search-box__input" id="search-input" type="text" placeholder="Search captures, atoms, artifacts, sources…">
     </div>
     <div id="search-results" aria-live="polite"></div>
 
-    <!-- Artifacts -->
-    <section class="section" id="sources">
+    <section class="section" id="artifacts-list">
       <div class="section__header">
         <h2 class="section__title">Artifacts</h2>
         <span class="section__link">{{ artifacts | length }} total</span>
@@ -174,6 +225,7 @@
           {% endif %}
           <div class="card__details">
             <span>Built from {{ artifact.built_from_count }} atom{{ '' if artifact.built_from_count == 1 else 's' }}</span>
+            <span>{{ artifact.capture_count }} capture{{ '' if artifact.capture_count == 1 else 's' }}</span>
             <span>{{ artifact.source_summary }}</span>
             {% if artifact['Date Shipped'] %}
             <span>Shipped {{ artifact['Date Shipped'] }}</span>
@@ -189,9 +241,9 @@
             {% endif %}
           </div>
           <div class="card__actions">
-            <a class="card__action" href="{{ artifact.external_url }}" target="_blank" rel="noreferrer">Open</a>
-            {% if artifact['Artifact URL'] %}
-            <a class="card__action card__action--subtle" href="{{ artifact.notion_url }}" target="_blank" rel="noreferrer">Notion</a>
+            <a class="card__action" href="{{ artifact.detail_href }}">Open</a>
+            {% if artifact.public_url %}
+            <a class="card__action card__action--subtle" href="{{ artifact.public_url }}" target="_blank" rel="noreferrer">Public link</a>
             {% endif %}
           </div>
         </article>
@@ -201,13 +253,12 @@
       <div class="empty-state">
         <div class="empty-state__icon">📦</div>
         <h3 class="empty-state__title">No artifacts yet</h3>
-        <p class="empty-state__body">Process a chapter and ship your first artifact to see it here.</p>
+        <p class="empty-state__body">Process a capture into atoms and ship the first artifact to see it here.</p>
       </div>
       {% endif %}
     </section>
 
-    <!-- Recent Sources -->
-    <section class="section">
+    <section class="section" id="sources-list">
       <div class="section__header">
         <h2 class="section__title">Sources</h2>
         <span class="section__link">{{ sources | length }} total</span>
@@ -230,6 +281,7 @@
           </div>
           <div class="card__details">
             <span>{{ source.progress_label }}</span>
+            <span>{{ source.capture_count }} capture{{ '' if source.capture_count == 1 else 's' }}</span>
             <span>{{ source.atom_count }} linked atom{{ '' if source.atom_count == 1 else 's' }}</span>
             <span>{{ source.artifact_count }} artifact{{ '' if source.artifact_count == 1 else 's' }}</span>
             <span>{{ source.related_source_count }} related source{{ '' if source.related_source_count == 1 else 's' }}</span>
@@ -243,14 +295,14 @@
           {% if source.related_sources_info %}
           <div class="related-links" aria-label="Related sources">
             {% for related_source in source.related_sources_info %}
-            <a class="tag tag--link" href="{{ related_source.url }}" target="_blank" rel="noreferrer">{{ related_source.name }}</a>
+            <a class="tag tag--link" href="{{ related_source.url }}">{{ related_source.name }}</a>
             {% endfor %}
           </div>
           {% endif %}
           <div class="card__actions">
-            <a class="card__action" href="{{ source.notion_url }}" target="_blank" rel="noreferrer">Open in Notion</a>
-            {% if source['Source URL'] %}
-            <a class="card__action card__action--subtle" href="{{ source['Source URL'] }}" target="_blank" rel="noreferrer">Open source</a>
+            <a class="card__action" href="{{ source.detail_href }}">Open details</a>
+            {% if source.public_url %}
+            <a class="card__action card__action--subtle" href="{{ source.public_url }}" target="_blank" rel="noreferrer">Public link</a>
             {% endif %}
           </div>
         </article>
@@ -260,7 +312,51 @@
       <div class="empty-state">
         <div class="empty-state__icon">📚</div>
         <h3 class="empty-state__title">No sources yet</h3>
-        <p class="empty-state__body">Add a book, paper, or article to get started.</p>
+        <p class="empty-state__body">Add a book, paper, article, or conversation to get started.</p>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="section" id="captures-list">
+      <div class="section__header">
+        <h2 class="section__title">Captures</h2>
+        <a class="section__link" href="./captures.html">Browse all captures</a>
+      </div>
+
+      {% if captures %}
+      <div class="card-grid">
+        {% for capture in captures[:6] %}
+        <article class="card card--interactive" data-domains="{{ (capture.Domain or []) | join(',') }}">
+          <span class="card__badge">{{ capture.display_type }}</span>
+          <h3 class="card__title">{{ capture.display_title }}</h3>
+          {% if capture.summary %}
+          <p class="card__body">{{ capture.summary }}</p>
+          {% endif %}
+          <div class="card__details">
+            <span>{{ capture.display_status }}</span>
+            <span>{{ capture.source_count }} source{{ '' if capture.source_count == 1 else 's' }}</span>
+            <span>{{ capture.atom_count }} atom{{ '' if capture.atom_count == 1 else 's' }}</span>
+            <span>{{ capture.artifact_count }} artifact{{ '' if capture.artifact_count == 1 else 's' }}</span>
+          </div>
+          <div class="card__meta">
+            {% for domain in (capture.Domain or []) %}
+            <span class="tag">{{ domain }}</span>
+            {% endfor %}
+          </div>
+          <div class="card__actions">
+            <a class="card__action" href="{{ capture.detail_href }}">Open</a>
+            {% if capture.public_url %}
+            <a class="card__action card__action--subtle" href="{{ capture.public_url }}" target="_blank" rel="noreferrer">Public link</a>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state__icon">📝</div>
+        <h3 class="empty-state__title">No captures yet</h3>
+        <p class="empty-state__body">Create capture entries to preserve raw extraction before it becomes a cleaned atom.</p>
       </div>
       {% endif %}
     </section>
@@ -290,14 +386,13 @@
           {% endif %}
           <div class="atom-card__footer">
             <span class="atom-card__reuse">{{ atom.source_summary }}</span>
-            <a class="card__action card__action--subtle" href="{{ atom.notion_url }}" target="_blank" rel="noreferrer">Open</a>
+            <a class="card__action card__action--subtle" href="{{ atom.detail_href }}">Open</a>
           </div>
         </article>
         {% endfor %}
       </div>
       {% endif %}
     </section>
-
   </main>
 
   <footer class="site-footer">

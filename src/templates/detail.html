@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{ site_description }}">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="./" class="site-logo" aria-label="{{ site_title }} home">
+        <span class="site-logo__icon" aria-hidden="true">🧠</span>
+        <span>{{ site_title }}</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="./">Gallery</a>
+        <a href="./captures.html" {% if entry_kind == 'capture' %}class="active"{% endif %}>Captures</a>
+        <a href="./graph.html">Graph</a>
+        <a href="./atoms.html" {% if entry_kind == 'atom' %}class="active"{% endif %}>Atoms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="main-content">
+    <section class="detail-hero">
+      <p class="detail-hero__eyebrow">{{ entry_kind | title }}</p>
+      <h1 class="detail-hero__title">{{ entry.display_title or entry.Name or entry.Claim or 'Untitled' }}</h1>
+      {% if entry_kind == 'source' and entry['Key Takeaway'] %}
+      <p class="detail-hero__summary">{{ entry['Key Takeaway'] }}</p>
+      {% elif entry_kind == 'capture' and entry.summary %}
+      <p class="detail-hero__summary">{{ entry.summary }}</p>
+      {% elif entry_kind == 'artifact' and entry['Chapter/Section'] %}
+      <p class="detail-hero__summary">{{ entry['Chapter/Section'] }}</p>
+      {% elif entry_kind == 'atom' and entry.Definition %}
+      <p class="detail-hero__summary">{{ entry.Definition }}</p>
+      {% endif %}
+
+      <div class="hero-meta">
+        {% if entry_kind == 'source' %}
+        <span class="hero-meta__pill">{{ entry.Status or 'Queue' }}</span>
+        <span class="hero-meta__pill">{{ entry.progress_label }}</span>
+        {% if entry.capture_count %}
+        <span class="hero-meta__pill">{{ entry.capture_count }} capture{{ '' if entry.capture_count == 1 else 's' }}</span>
+        {% endif %}
+        {% elif entry_kind == 'capture' %}
+        <span class="hero-meta__pill">{{ entry.display_type }}</span>
+        <span class="hero-meta__pill">{{ entry.display_status }}</span>
+        {% if entry.source_count %}
+        <span class="hero-meta__pill">{{ entry.source_count }} source{{ '' if entry.source_count == 1 else 's' }}</span>
+        {% endif %}
+        {% elif entry_kind == 'artifact' %}
+        <span class="hero-meta__pill">{{ entry.Format or 'Artifact' }}</span>
+        <span class="hero-meta__pill">{{ entry.Status or 'Draft' }}</span>
+        {% if entry.Points %}
+        <span class="hero-meta__pill">+{{ entry.Points }} pts</span>
+        {% endif %}
+        {% elif entry_kind == 'atom' %}
+        <span class="hero-meta__pill">{{ entry.Type or 'atom' }}</span>
+        {% if entry.Confidence %}
+        <span class="hero-meta__pill">{{ entry.Confidence }}</span>
+        {% endif %}
+        {% if entry['Reuse Count'] %}
+        <span class="hero-meta__pill">↻ {{ entry['Reuse Count'] | int }}</span>
+        {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="hero-actions">
+        <a class="button-secondary" href="./">Back to Gallery</a>
+        {% if entry_kind in ('source', 'capture', 'artifact') and entry.public_url %}
+        <a class="button-primary" href="{{ entry.public_url }}" target="_blank" rel="noreferrer">Open public link</a>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="detail-layout">
+      <aside class="detail-aside">
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Metadata</h2>
+          <dl class="detail-meta">
+            {% if entry_kind == 'source' %}
+            <div><dt>Author</dt><dd>{{ entry.Author or 'Unknown' }}</dd></div>
+            <div><dt>Status</dt><dd>{{ entry.Status or 'Queue' }}</dd></div>
+            <div><dt>Progress</dt><dd>{{ entry.progress_label }}</dd></div>
+            {% elif entry_kind == 'capture' %}
+            <div><dt>Type</dt><dd>{{ entry.display_type }}</dd></div>
+            <div><dt>Status</dt><dd>{{ entry.display_status }}</dd></div>
+            <div><dt>Sources</dt><dd>{{ entry.source_count }}</dd></div>
+            {% elif entry_kind == 'artifact' %}
+            <div><dt>Format</dt><dd>{{ entry.Format or 'Artifact' }}</dd></div>
+            <div><dt>Status</dt><dd>{{ entry.Status or 'Draft' }}</dd></div>
+            {% if entry['Date Shipped'] %}
+            <div><dt>Shipped</dt><dd>{{ entry['Date Shipped'] }}</dd></div>
+            {% endif %}
+            {% elif entry_kind == 'atom' %}
+            <div><dt>Type</dt><dd>{{ entry.Type or 'atom' }}</dd></div>
+            <div><dt>Confidence</dt><dd>{{ entry.Confidence or 'Unrated' }}</dd></div>
+            <div><dt>Reuse</dt><dd>{% if entry['Reuse Count'] %}{{ entry['Reuse Count'] | int }}{% else %}0{% endif %}</dd></div>
+            {% endif %}
+          </dl>
+        </article>
+
+        {% if entry.Domain %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Domains</h2>
+          <div class="related-links">
+            {% for domain in entry.Domain %}
+            <span class="tag">{{ domain }}</span>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'source' and entry.related_sources_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Related Sources</h2>
+          <div class="detail-link-list">
+            {% for item in entry.related_sources_info %}
+            <a href="{{ item.url }}">{{ item.name }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'source' and entry.atoms_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Atoms</h2>
+          <div class="detail-link-list">
+            {% for item in entry.atoms_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'source' and entry.artifacts_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Artifacts</h2>
+          <div class="detail-link-list">
+            {% for item in entry.artifacts_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'source' and entry.captures_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Captures</h2>
+          <div class="detail-link-list">
+            {% for item in entry.captures_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'capture' and entry.sources_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Sources</h2>
+          <div class="detail-link-list">
+            {% for item in entry.sources_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'capture' and entry.atoms_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Spawned Atoms</h2>
+          <div class="detail-link-list">
+            {% for item in entry.atoms_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'capture' and entry.artifacts_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Used In Artifacts</h2>
+          <div class="detail-link-list">
+            {% for item in entry.artifacts_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and entry.sources_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Sources</h2>
+          <div class="detail-link-list">
+            {% for item in entry.sources_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and entry.related_atoms_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Related Atoms</h2>
+          <div class="detail-link-list">
+            {% for item in entry.related_atoms_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and entry.artifacts_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Used In</h2>
+          <div class="detail-link-list">
+            {% for item in entry.artifacts_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and entry.captures_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Capture Context</h2>
+          <div class="detail-link-list">
+            {% for item in entry.captures_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'artifact' and entry.sources_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Sources</h2>
+          <div class="detail-link-list">
+            {% for item in entry.sources_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'artifact' and entry.atoms_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Built From</h2>
+          <div class="detail-link-list">
+            {% for item in entry.atoms_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'artifact' and entry.captures_info %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Capture Context</h2>
+          <div class="detail-link-list">
+            {% for item in entry.captures_info %}
+            <a href="{{ item.href }}">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </article>
+        {% endif %}
+      </aside>
+
+      <section class="detail-main">
+        {% if entry_kind == 'capture' and entry.summary %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Extraction Summary</h2>
+          <p class="detail-copy">{{ entry.summary }}</p>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and entry['Source Quote'] %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Source Quote</h2>
+          <blockquote class="atom-card__quote">“{{ entry['Source Quote'] }}”</blockquote>
+        </article>
+        {% endif %}
+
+        {% if entry_kind == 'atom' and (entry.Because or entry.Boundaries) %}
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Reasoning</h2>
+          {% if entry.Because %}
+          <p class="detail-copy"><strong>Because:</strong> {{ entry.Because }}</p>
+          {% endif %}
+          {% if entry.Boundaries %}
+          <p class="detail-copy"><strong>Boundaries:</strong> {{ entry.Boundaries }}</p>
+          {% endif %}
+        </article>
+        {% endif %}
+
+        <article class="detail-panel">
+          <h2 class="detail-panel__title">Contents</h2>
+          {% if entry.content_html %}
+          <div class="detail-prose">{{ entry.content_html }}</div>
+          {% else %}
+          <p class="detail-copy">No Notion page body is synced yet for this item. The structured properties are still available above.</p>
+          {% endif %}
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer__text">
+      <strong>{{ site_title }}</strong> by {{ site_author }} · Last built {{ now }}
+    </p>
+  </footer>
+</body>
+</html>
