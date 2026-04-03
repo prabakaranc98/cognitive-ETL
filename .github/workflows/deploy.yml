@@ -1,0 +1,72 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    env:
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      SOURCES_DB_ID: ${{ secrets.SOURCES_DB_ID }}
+      ATOMS_DB_ID: ${{ secrets.ATOMS_DB_ID }}
+      ARTIFACTS_DB_ID: ${{ secrets.ARTIFACTS_DB_ID }}
+      SITE_TITLE: Cognitive ETL
+      SITE_AUTHOR: Prabakaran Chandran
+      SITE_URL: ${{ vars.SITE_URL }}
+      SITE_DESCRIPTION: A knowledge graph that compounds.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run smoke tests
+        run: ./scripts/cognitive_etl.sh test
+
+      - name: Refresh data and storefront
+        run: ./scripts/cognitive_etl.sh refresh
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

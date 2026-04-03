@@ -1,0 +1,12 @@
+[
+  {
+    "id": "artifact-1",
+    "Artifact ID": "ART-1",
+    "Name": "Causal Invariance in 5 Slides",
+    "Chapter/Section": "A compact walkthrough of invariance and why it matters.",
+    "Domain": ["causal inference", "systems"],
+    "Format": "Slides",
+    "Status": "Shipped",
+    "Points": 18
+  }
+]

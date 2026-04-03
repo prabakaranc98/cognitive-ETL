@@ -1,0 +1,12 @@
+[
+  {
+    "id": "source-1",
+    "Source ID": "SRC-1",
+    "Name": "Scholkopf et al. 2021",
+    "Type": "Paper",
+    "Author": "Bernhard Scholkopf et al.",
+    "Domain": ["causal inference"],
+    "Status": "Done",
+    "Key Takeaway": "Robust machine learning depends on discovering mechanisms that persist across environments."
+  }
+]

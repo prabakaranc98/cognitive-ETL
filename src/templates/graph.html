@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Graph · {{ site_title }}</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="./" class="site-logo" aria-label="{{ site_title }} home">
+        <span class="site-logo__icon" aria-hidden="true">🧠</span>
+        <span>{{ site_title }}</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="./">Gallery</a>
+        <a href="./graph.html" class="active">Graph</a>
+        <a href="./atoms.html">Atoms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container container--wide" id="main-content" style="padding-top: 40px; padding-bottom: 80px;">
+
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">Knowledge Graph</h2>
+        <span class="section__link">{{ stats.total_atoms }} atoms · {{ stats.total_sources }} sources · {{ graph_edge_count }} edges</span>
+      </div>
+
+      <div class="insight-grid insight-grid--compact">
+        <article class="panel">
+          <div class="section__header section__header--compact">
+            <h3 class="section__title">Snapshot</h3>
+            <span class="section__link">Current graph state</span>
+          </div>
+          <div class="pipeline-list">
+            <div class="pipeline-list__item">
+              <span class="pipeline-list__label">Last synced</span>
+              <span class="pipeline-list__count">{{ last_synced_label }}</span>
+            </div>
+            <div class="pipeline-list__item">
+              <span class="pipeline-list__label">Atoms</span>
+              <span class="pipeline-list__count">{{ stats.total_atoms }}</span>
+            </div>
+            <div class="pipeline-list__item">
+              <span class="pipeline-list__label">Edges</span>
+              <span class="pipeline-list__count">{{ graph_edge_count }}</span>
+            </div>
+            <div class="pipeline-list__item">
+              <span class="pipeline-list__label">Source links</span>
+              <span class="pipeline-list__count">{{ source_relation_count }}</span>
+            </div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="section__header section__header--compact">
+            <h3 class="section__title">Domains</h3>
+            <span class="section__link">Atom concentration</span>
+          </div>
+          {% if domain_summary %}
+          <div class="domain-list">
+            {% for domain in domain_summary[:5] %}
+            <div class="domain-list__item">
+              <span>{{ domain.name }}</span>
+              <strong>{{ domain.count }}</strong>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </article>
+      </div>
+
+      <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources and atoms">
+        <div class="graph-legend">
+          <div class="graph-legend__item">
+            <span class="graph-legend__dot" style="background: #6EE7B7;"></span>
+            <span>Source</span>
+          </div>
+          <div class="graph-legend__item">
+            <span class="graph-legend__dot" style="background: #E85D3A;"></span>
+            <span>Atom</span>
+          </div>
+          <div class="graph-legend__item">
+            <span class="graph-legend__line graph-legend__line--source"></span>
+            <span>Related source</span>
+          </div>
+          {% for domain in domain_summary[:5] %}
+          <div class="graph-legend__item">
+            <span class="graph-legend__dot graph-legend__dot--domain" data-domain-color="{{ domain.name }}"></span>
+            <span>{{ domain.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <p style="text-align: center; margin-top: 16px; font-size: 0.8125rem; color: var(--text-tertiary);">
+        Drag to reposition · Scroll to zoom · Click a node to open its Notion page · Larger nodes = higher reuse count · Dashed links connect related sources
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer__text">
+      <strong>{{ site_title }}</strong> by {{ site_author }} · Last built {{ now }}
+    </p>
+  </footer>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>

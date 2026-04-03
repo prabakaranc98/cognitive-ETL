@@ -1,0 +1,13 @@
+{
+  "total_sources": 1,
+  "total_atoms": 2,
+  "total_artifacts": 1,
+  "shipped_artifacts": 1,
+  "total_points": 18,
+  "total_reuse": 3,
+  "domains": {
+    "causal inference": 2,
+    "systems": 1
+  },
+  "last_synced": "2026-04-03T19:40:00Z"
+}

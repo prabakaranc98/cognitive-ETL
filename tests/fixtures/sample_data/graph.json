@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    {
+      "id": "ATM-1",
+      "label": "Causal invariance is what lets a model travel across environments.",
+      "type": "atom",
+      "domain": ["causal inference"],
+      "confidence": "4",
+      "atom_type": "concept",
+      "reuse_count": 2
+    },
+    {
+      "id": "ATM-2",
+      "label": "Interventions reveal structure that correlations alone can hide.",
+      "type": "atom",
+      "domain": ["causal inference", "systems"],
+      "confidence": "5",
+      "atom_type": "mechanism",
+      "reuse_count": 1
+    },
+    {
+      "id": "Scholkopf et al. 2021",
+      "label": "Scholkopf et al. 2021",
+      "type": "source",
+      "source_type": "Paper",
+      "domain": ["causal inference"]
+    }
+  ],
+  "edges": [
+    {
+      "source": "ATM-1",
+      "target": "Scholkopf et al. 2021",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-2",
+      "target": "Scholkopf et al. 2021",
+      "type": "from_source"
+    },
+    {
+      "source": "ATM-1",
+      "target": "ATM-2",
+      "type": "related"
+    }
+  ]
+}

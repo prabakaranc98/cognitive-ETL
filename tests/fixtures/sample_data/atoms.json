@@ -1,0 +1,28 @@
+[
+  {
+    "id": "atom-1",
+    "Atom ID": "ATM-1",
+    "Claim": "Causal invariance is what lets a model travel across environments.",
+    "Definition": "The useful part of a causal model is the mechanism that survives distribution shifts.",
+    "Domain": ["causal inference"],
+    "Type": "concept",
+    "Confidence": "4",
+    "Reuse Count": 2,
+    "Source": ["source-1"],
+    "Related Atoms": ["atom-2"],
+    "Used In Artifacts": ["artifact-1"]
+  },
+  {
+    "id": "atom-2",
+    "Atom ID": "ATM-2",
+    "Claim": "Interventions reveal structure that correlations alone can hide.",
+    "Definition": "Observational fit can be misleading when interventions change the data-generating process.",
+    "Domain": ["causal inference", "systems"],
+    "Type": "mechanism",
+    "Confidence": "5",
+    "Reuse Count": 1,
+    "Source": ["source-1"],
+    "Related Atoms": ["atom-1"],
+    "Used In Artifacts": ["artifact-1"]
+  }
+]
