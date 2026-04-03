@@ -314,7 +314,7 @@ def resolve_relations(
             {
                 "id": atom.get("Atom ID", atom["id"]),
                 "label": atom.get("Claim", "?"),
-                "url": atom.get("url", ""),
+                "url": build_detail_href("atom", atom),
                 "type": "atom",
                 "domain": atom.get("Domain", []),
                 "confidence": atom.get("Confidence"),
@@ -328,7 +328,7 @@ def resolve_relations(
             {
                 "id": source.get("Name", source["id"]),
                 "label": source.get("Name", "?"),
-                "url": source.get("Source URL") or source.get("url", ""),
+                "url": build_detail_href("source", source),
                 "type": "source",
                 "source_type": source.get("Type"),
                 "domain": source.get("Domain", []),
