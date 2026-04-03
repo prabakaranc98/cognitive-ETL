@@ -4,12 +4,14 @@ import json
 import shutil
 from collections import Counter
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 
 from cognitive_etl.config import DATA_DIR, DIST_DIR, STATIC_DIR, TEMPLATE_DIR, get_site_config
+from cognitive_etl.routes import build_detail_href
 
 DEFAULT_GRAPH: dict[str, list[dict[str, Any]]] = {"nodes": [], "edges": []}
 
