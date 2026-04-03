@@ -250,29 +250,18 @@ This rebuilds two outputs:
 ## Deployment
 
 GitHub Pages deployment is already wired in `.github/workflows/deploy.yml`.
-The workflow uses GitHub Actions secrets directly on the runner. It does not rely on a checked-in `.env` file.
+The deploy workflow builds from the checked-in repo state. It does not require a local `.env` file or GitHub secrets.
 The current project-pages target is `https://prabakaranc98.github.io/cogETL`.
-
-Required GitHub repository secrets:
-
-- `NOTION_API_KEY`
-- `SOURCES_DB_ID`
-- `ATOMS_DB_ID`
-- `ARTIFACTS_DB_ID`
-
-Optional GitHub repository secret:
-
-- `CAPTURES_DB_ID`
 
 Then set GitHub Pages to use `GitHub Actions` as the source.
 
 The deploy workflow:
 
-- runs smoke tests
-- syncs Notion
 - rebuilds the storefront
 - verifies the Pages bundle exists
 - deploys `dist/` to GitHub Pages
+
+If you want fresh Notion data in the published site, run a sync locally first and commit the updated `data/` files before pushing.
 
 ## Environment Variables
 
