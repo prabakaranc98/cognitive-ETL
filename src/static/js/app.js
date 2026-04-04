@@ -558,6 +558,7 @@ function renderForceGraph(container, graph, searchIndex) {
   const inspectorTags = document.getElementById('graph-inspector-tags');
   const inspectorLinks = document.getElementById('graph-inspector-links');
   const inspectorActions = document.getElementById('graph-inspector-actions');
+  const inspector = document.getElementById('graph-inspector');
 
   function resolveNodeId(value) {
     return typeof value === 'object' ? value.id : value;
@@ -607,6 +608,7 @@ function renderForceGraph(container, graph, searchIndex) {
 
     inspectorTitle.textContent = nodeData.label;
     inspectorSummary.textContent = buildGraphSummary(nodeData);
+    inspector?.classList.add('is-active');
 
     const metaBits = [
       `<span class="graph-meta-pill">${escapeHtml(nodeData.type)}</span>`,
@@ -637,11 +639,12 @@ function renderForceGraph(container, graph, searchIndex) {
       clearButton.addEventListener('click', () => {
         selectedId = null;
         inspectorTitle.textContent = 'Select a node';
-        inspectorSummary.textContent = 'Click a node to inspect its summary, provenance, and direct neighborhood. The graph is for tracing ideas, not just seeing them.';
+        inspectorSummary.textContent = 'Click a node to inspect it without leaving the graph. Use the detail page only when you want the full reading view.';
         inspectorMeta.innerHTML = '';
         inspectorTags.innerHTML = '';
         inspectorLinks.innerHTML = '';
         inspectorActions.innerHTML = '';
+        inspector?.classList.remove('is-active');
         refreshVisibility();
       });
     }

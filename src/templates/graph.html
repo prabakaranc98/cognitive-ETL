@@ -18,60 +18,20 @@
     <section class="section">
       <div class="section__header">
         <h2 class="section__title">Graph</h2>
-        <span class="section__link">{{ stats.total_sources }} sources · {{ stats.total_captures }} captures · {{ stats.total_atoms }} atoms · {{ stats.total_artifacts }} artifacts · {{ graph_edge_count }} edges</span>
+        <span class="section__link">Last synced {{ last_synced_label }}</span>
       </div>
-      <p class="section__note">This network shows how sources, captures, atoms, and artifacts relate. The visual emphasis stays quiet; the point is legibility, not spectacle.</p>
-
-      <div class="insight-grid insight-grid--compact">
-        <article class="panel">
-          <div class="section__header section__header--compact">
-            <h3 class="section__title">Snapshot</h3>
-            <span class="section__link">Current graph state</span>
-          </div>
-          <div class="pipeline-list">
-            <div class="pipeline-list__item">
-              <span class="pipeline-list__label">Last synced</span>
-              <span class="pipeline-list__count">{{ last_synced_label }}</span>
-            </div>
-            <div class="pipeline-list__item">
-              <span class="pipeline-list__label">Atoms</span>
-              <span class="pipeline-list__count">{{ stats.total_atoms }}</span>
-            </div>
-            <div class="pipeline-list__item">
-              <span class="pipeline-list__label">Captures</span>
-              <span class="pipeline-list__count">{{ stats.total_captures }}</span>
-            </div>
-            <div class="pipeline-list__item">
-              <span class="pipeline-list__label">Edges</span>
-              <span class="pipeline-list__count">{{ graph_edge_count }}</span>
-            </div>
-            <div class="pipeline-list__item">
-              <span class="pipeline-list__label">Source links</span>
-              <span class="pipeline-list__count">{{ source_relation_count }}</span>
-            </div>
-          </div>
-        </article>
-        <article class="panel">
-          <div class="section__header section__header--compact">
-            <h3 class="section__title">Domains</h3>
-            <span class="section__link">Atom concentration</span>
-          </div>
-          {% if domain_summary %}
-          <div class="domain-list">
-            {% for domain in domain_summary[:5] %}
-            <div class="domain-list__item">
-              <span>{{ domain.name }}</span>
-              <strong>{{ domain.count }}</strong>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
-        </article>
-      </div>
+      <p class="section__note">Trace where an idea came from and where it went. The graph is the primary surface; filters and inspection stay secondary.</p>
 
       <div class="graph-workspace">
         <section class="graph-stage section-shell section-shell--feature">
           <div class="graph-toolbar">
+            <div class="graph-toolbar__meta">
+              <span>{{ stats.total_sources }} sources</span>
+              <span>{{ stats.total_captures }} captures</span>
+              <span>{{ stats.total_atoms }} atoms</span>
+              <span>{{ stats.total_artifacts }} artifacts</span>
+              <span>{{ graph_edge_count }} links</span>
+            </div>
             <div class="graph-filter-group" aria-label="Filter by type">
               <button class="filter-btn active" type="button" data-graph-filter-group="type" data-graph-filter-value="all" aria-pressed="true">All</button>
               <button class="filter-btn" type="button" data-graph-filter-group="type" data-graph-filter-value="source" aria-pressed="false">Sources</button>
@@ -121,10 +81,10 @@
           </div>
         </section>
 
-        <aside class="graph-inspector section-shell section-shell--rail section-shell--system">
+        <aside class="graph-inspector section-shell section-shell--rail section-shell--system" id="graph-inspector">
           <p class="spotlight-card__eyebrow">Inspector</p>
           <h2 class="section__title" id="graph-inspector-title">Select a node</h2>
-          <p class="graph-inspector__summary" id="graph-inspector-summary">Click a node to inspect its summary, provenance, and direct neighborhood. The graph is for tracing ideas, not just seeing them.</p>
+          <p class="graph-inspector__summary" id="graph-inspector-summary">Click a node to inspect it without leaving the graph. Use the detail page only when you want the full reading view.</p>
           <div class="graph-inspector__meta" id="graph-inspector-meta"></div>
           <div class="graph-inspector__tags" id="graph-inspector-tags"></div>
           <div class="graph-inspector__links" id="graph-inspector-links"></div>
@@ -133,7 +93,7 @@
       </div>
 
       <p class="graph-note">
-        Drag to reposition · Scroll to zoom · Click a node to inspect it · Larger atom nodes = higher reuse count · Dashed links connect related sources
+        Drag to reposition · Scroll to zoom · Click a node to inspect it · Larger atom nodes = higher reuse count
       </p>
     </section>
 
