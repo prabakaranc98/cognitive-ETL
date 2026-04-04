@@ -44,17 +44,17 @@
             <a class="section__link" href="./artifacts.html">Browse all artifacts</a>
           </div>
           {% if latest_artifact %}
-          <article class="spotlight-card spotlight-card--artifact spotlight-card--lead">
+          <article class="feature-hero">
             <p class="spotlight-card__eyebrow">{{ latest_artifact.Format }}</p>
             <h2 class="spotlight-card__title">{{ latest_artifact.Name }}</h2>
-            <p class="spotlight-card__body">{{ latest_artifact['Chapter/Section'] }}</p>
-            <div class="card__details card__details--inline">
+            <p class="spotlight-card__body feature-hero__body">{{ latest_artifact['Chapter/Section'] }}</p>
+            <div class="feature-hero__meta">
               <span>{{ latest_artifact.source_summary }}</span>
               <span>{{ latest_artifact.capture_count }} capture{{ '' if latest_artifact.capture_count == 1 else 's' }}</span>
               <span>{{ latest_artifact.built_from_count }} atom{{ '' if latest_artifact.built_from_count == 1 else 's' }}</span>
               {% if latest_artifact.Points %}<span>+{{ latest_artifact.Points }} pts</span>{% endif %}
             </div>
-            <div class="card__actions">
+            <div class="card__actions feature-hero__actions">
               <a class="card__action" href="{{ latest_artifact.detail_href }}">Open artifact</a>
               {% if latest_artifact.public_url %}
               <a class="card__action card__action--subtle" href="{{ latest_artifact.public_url }}" target="_blank" rel="noreferrer">Public link</a>
@@ -112,7 +112,7 @@
           {% if featured_atoms %}
           <div class="atom-grid atom-grid--compact">
             {% for atom in featured_atoms %}
-            <article class="atom-card">
+            <article class="atom-card atom-card--flat">
               <div class="card__meta atom-card__meta">
                 <span class="tag tag--accent">{{ atom.Type or 'atom' }}</span>
                 {% for d in (atom.Domain or []) %}
@@ -253,7 +253,7 @@
       <p class="section__note">The process stays visible, but quieter than the outputs and lineage.</p>
 
       <div class="insight-grid">
-        <article class="panel panel--quiet">
+        <article class="panel panel--quiet panel--flat">
           <div class="section__header section__header--compact">
             <h2 class="section__title">Source flow</h2>
             <span class="section__link">What is being worked through</span>
@@ -268,7 +268,7 @@
           </div>
         </article>
 
-        <article class="panel panel--quiet">
+        <article class="panel panel--quiet panel--flat">
           <div class="section__header section__header--compact">
             <h2 class="section__title">Capture flow</h2>
             <span class="section__link">Extraction before abstraction</span>
@@ -283,7 +283,7 @@
           </div>
         </article>
 
-        <article class="panel panel--quiet">
+        <article class="panel panel--quiet panel--flat">
           <div class="section__header section__header--compact">
             <h2 class="section__title">Domains</h2>
             <span class="section__link">Where the graph is densest</span>
