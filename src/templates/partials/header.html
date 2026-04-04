@@ -1,0 +1,50 @@
+<header class="site-header">
+  <div class="container container--wide site-header__inner">
+    <a href="./" class="site-logo" aria-label="{{ site_title }} home">
+      <span class="site-logo__icon" aria-hidden="true">🧠</span>
+      <span>{{ site_title }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      <a href="./" {% if page_section == 'overview' %}class="active"{% endif %}>Overview</a>
+      <a href="./graph.html" {% if page_section == 'graph' %}class="active"{% endif %}>Graph</a>
+      <a href="./sources.html" {% if page_section == 'library' %}class="active"{% endif %}>Library</a>
+      <a href="./artifacts.html" {% if page_section == 'artifacts' %}class="active"{% endif %}>Artifacts</a>
+    </nav>
+
+    <div class="site-header__tools">
+      <div class="site-status" aria-label="Sync status">
+        <span class="site-status__dot" aria-hidden="true"></span>
+        <span class="site-status__text">Synced {{ last_synced_label }}</span>
+      </div>
+
+      <div class="site-search" data-search-context>
+        <label class="sr-only" for="global-search-input">Search the graph</label>
+        <svg class="site-search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          class="site-search__input"
+          id="global-search-input"
+          type="text"
+          placeholder="Search papers, captures, atoms, artifacts…"
+          data-search-input
+          data-search-mode="results"
+          data-search-scope="all"
+          data-results-target="global-search-results"
+        >
+        <div class="search-results search-results--floating" id="global-search-results" aria-live="polite" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  {% if page_section == 'library' %}
+  <div class="container container--wide">
+    <nav class="library-nav" aria-label="Library">
+      <a href="./sources.html" {% if page_key in ('source', 'sources') %}class="active"{% endif %}>Sources</a>
+      <a href="./captures.html" {% if page_key in ('capture', 'captures') %}class="active"{% endif %}>Captures</a>
+      <a href="./atoms.html" {% if page_key in ('atom', 'atoms') %}class="active"{% endif %}>Atoms</a>
+    </nav>
+  </div>
+  {% endif %}
+</header>

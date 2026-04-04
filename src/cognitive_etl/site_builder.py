@@ -1175,8 +1175,19 @@ def copy_static_assets() -> None:
     if not STATIC_DIR.exists():
         return
 
-    shutil.copytree(STATIC_DIR / "css", DIST_DIR / "css", dirs_exist_ok=True)
-    shutil.copytree(STATIC_DIR / "js", DIST_DIR / "js", dirs_exist_ok=True)
+    css_dir = STATIC_DIR / "css"
+    js_dir = STATIC_DIR / "js"
+
+    if css_dir.exists():
+        shutil.copytree(css_dir, DIST_DIR / "css", dirs_exist_ok=True)
+    if js_dir.exists():
+        shutil.copytree(js_dir, DIST_DIR / "js", dirs_exist_ok=True)
+
+    for item in STATIC_DIR.iterdir():
+        if item.name in {"css", "js"}:
+            continue
+        if item.is_file():
+            shutil.copy2(item, DIST_DIR / item.name)
 
 
 def build_template_context() -> dict[str, Any]:

@@ -1,7 +1,5 @@
 /* ── Cognitive ETL — Client-side Logic ── */
 
-// ── Data Loading ─────────────────────────────────────────────────────────────
-
 async function loadJSON(name) {
   try {
     const resp = await fetch(`./data/${name}.json`);
@@ -12,140 +10,244 @@ async function loadJSON(name) {
   }
 }
 
-// ── Search (Fuse.js) ─────────────────────────────────────────────────────────
+let searchEnginePromise = null;
 
-let fuseInstance = null;
+async function ensureFuse() {
+  if (typeof Fuse !== 'undefined') return;
+  await new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js';
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
 
-async function initSearch() {
-  const searchInput = document.getElementById('search-input');
-  if (!searchInput) return;
+async function getSearchEngine() {
+  if (searchEnginePromise) return searchEnginePromise;
 
-  const index = await loadJSON('search_index');
-  if (!index.length) return;
+  searchEnginePromise = (async () => {
+    const index = await loadJSON('search_index');
+    if (!index.length) return null;
 
-  // Load Fuse.js from CDN
-  if (typeof Fuse === 'undefined') {
-    await new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js';
-      script.onload = resolve;
-      document.head.appendChild(script);
+    await ensureFuse();
+    const fuse = new Fuse(index, {
+      keys: [
+        { name: 'title', weight: 0.5 },
+        { name: 'body', weight: 0.3 },
+        { name: 'domain', weight: 0.1 },
+        { name: 'tags', weight: 0.1 },
+      ],
+      threshold: 0.3,
+      includeScore: true,
+    });
+
+    return { index, fuse };
+  })();
+
+  return searchEnginePromise;
+}
+
+function scopeMatches(item, scope) {
+  return scope === 'all' || item.type === scope;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function truncate(text, length) {
+  if (!text) return '';
+  return text.length > length ? `${text.slice(0, length)}…` : text;
+}
+
+function hideResults(container) {
+  if (!container) return;
+  container.hidden = true;
+  container.innerHTML = '';
+}
+
+function renderSearchResults(results, container, options = {}) {
+  if (!container) return;
+
+  const { floating = false } = options;
+  if (!results.length) {
+    container.hidden = false;
+    container.innerHTML = '<div class="search-empty">No matching items.</div>';
+    return;
+  }
+
+  container.hidden = false;
+  container.innerHTML = results.map(({ item }) => {
+    const body = truncate(item.body || '', floating ? 110 : 150);
+    const domains = (item.domain || []).slice(0, floating ? 2 : 4);
+    return `
+      <a class="search-result" href="${escapeHtml(item.href || '#')}">
+        <div class="search-result__meta">
+          <span class="search-result__type">${escapeHtml(item.type)}</span>
+          ${domains.map((domain) => `<span class="search-result__tag">${escapeHtml(domain)}</span>`).join('')}
+        </div>
+        <strong class="search-result__title">${escapeHtml(item.title)}</strong>
+        ${body ? `<p class="search-result__body">${escapeHtml(body)}</p>` : ''}
+      </a>
+    `;
+  }).join('');
+}
+
+function getSearchInputForButton(button) {
+  const context = button.closest('[data-search-context]');
+  if (context) {
+    return context.querySelector('[data-search-input][data-search-mode="results"]');
+  }
+  return document.querySelector('[data-search-input][data-search-mode="results"]');
+}
+
+async function initResultSearches() {
+  const inputs = [...document.querySelectorAll('[data-search-input][data-search-mode="results"]')];
+  if (!inputs.length) return;
+
+  const engine = await getSearchEngine();
+  if (!engine) return;
+
+  for (const input of inputs) {
+    const resultsId = input.dataset.resultsTarget;
+    const scope = input.dataset.searchScope || 'all';
+    const container = resultsId ? document.getElementById(resultsId) : null;
+    if (!container) continue;
+
+    const runSearch = () => {
+      const query = input.value.trim();
+      if (!query) {
+        hideResults(container);
+        return;
+      }
+
+      const matches = engine.fuse
+        .search(query, { limit: scope === 'all' ? 12 : 24 })
+        .filter((result) => scopeMatches(result.item, scope))
+        .slice(0, scope === 'all' ? 8 : 12);
+
+      renderSearchResults(matches, container, { floating: container.classList.contains('search-results--floating') });
+    };
+
+    input.addEventListener('input', runSearch);
+    input.addEventListener('focus', () => {
+      if (input.value.trim()) runSearch();
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        input.blur();
+        hideResults(container);
+      }
     });
   }
 
-  fuseInstance = new Fuse(index, {
-    keys: [
-      { name: 'title', weight: 0.5 },
-      { name: 'body', weight: 0.3 },
-      { name: 'domain', weight: 0.1 },
-      { name: 'tags', weight: 0.1 },
-    ],
-    threshold: 0.3,
-    includeScore: true,
-  });
-
-  searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.trim();
-    const resultsEl = document.getElementById('search-results');
-    if (!resultsEl) return;
-
-    if (!query) {
-      resultsEl.innerHTML = '';
-      resultsEl.style.display = 'none';
-      // Show all cards again
-      document.querySelectorAll('.card, .atom-card').forEach(c => c.style.display = '');
-      return;
-    }
-
-    const results = fuseInstance.search(query, { limit: 20 });
-    renderSearchResults(results, resultsEl);
+  document.addEventListener('click', (event) => {
+    document.querySelectorAll('.search-results--floating').forEach((container) => {
+      if (!container.parentElement?.contains(event.target)) {
+        hideResults(container);
+      }
+    });
   });
 
   document.querySelectorAll('[data-query]').forEach((button) => {
     button.addEventListener('click', () => {
-      const query = button.dataset.query || '';
-      searchInput.value = query;
-      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-      searchInput.focus();
+      const input = getSearchInputForButton(button);
+      if (!input) return;
+      input.value = button.dataset.query || '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
     });
   });
 }
 
-function renderSearchResults(results, container) {
-  if (!results.length) {
-    container.innerHTML = '<div class="empty-state"><p class="empty-state__body">No results found.</p></div>';
-    container.style.display = 'block';
-    return;
+function cardMatchesFilter(card, group, value) {
+  if (value === 'all') return true;
+
+  if (group === 'domain') {
+    const domains = (card.dataset.domains || '').split(',').filter(Boolean);
+    return domains.includes(value);
   }
 
-  const typeIcons = { atom: '⚛️', artifact: '📦', source: '📚', capture: '📝' };
-  
-  container.innerHTML = results.map(r => {
-    const item = r.item;
-    const href = item.href ? escapeHtml(item.href) : '';
-    const typeClass = item.type ? ` card--${escapeHtml(item.type)}` : '';
-    const openTag = href
-      ? `<a class="card card--interactive card--search${typeClass}" href="${href}">`
-      : `<div class="card card--search${typeClass}">`;
-    const closeTag = href ? '</a>' : '</div>';
-    return `
-      ${openTag}
-        <span class="card__badge">${typeIcons[item.type] || ''} ${item.type}</span>
-        <h3 class="card__title">${escapeHtml(item.title)}</h3>
-        ${item.body ? `<p class="card__body">${escapeHtml(item.body.slice(0, 150))}${item.body.length > 150 ? '…' : ''}</p>` : ''}
-        <div class="card__meta">
-          ${(item.domain || []).map(d => `<span class="tag">${escapeHtml(d)}</span>`).join('')}
-        </div>
-      ${closeTag}
-    `;
-  }).join('');
-  container.style.display = 'grid';
-  container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
-  container.style.gap = '20px';
+  if (group === 'status') {
+    return (card.dataset.status || '') === value;
+  }
+
+  if (group === 'capture-type') {
+    return (card.dataset.captureType || '') === value;
+  }
+
+  if (group === 'usage') {
+    return (card.dataset.usage || '') === value;
+  }
+
+  return true;
 }
 
-// ── Domain Filtering ─────────────────────────────────────────────────────────
+function initCollectionFiltering() {
+  document.querySelectorAll('[data-collection]').forEach((collection) => {
+    const cards = [...collection.querySelectorAll('[data-filterable-item]')];
+    if (!cards.length) return;
 
-function initFilters() {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  if (!filterBtns.length) return;
+    const searchInput = collection.querySelector('[data-collection-search]');
+    const filterButtons = [...collection.querySelectorAll('.filter-btn[data-filter-group]')];
+    const emptyState = collection.querySelector('[data-collection-empty]');
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const domain = btn.dataset.domain;
-      
-      // Toggle active
-      if (domain === 'all') {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      } else {
-        document.querySelector('.filter-btn[data-domain="all"]')?.classList.remove('active');
-        btn.classList.toggle('active');
-      }
+    const update = () => {
+      const query = (searchInput?.value || '').trim().toLowerCase();
+      const activeFilters = {};
 
-      filterBtns.forEach((button) => {
-        button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+      filterButtons.forEach((button) => {
+        const group = button.dataset.filterGroup;
+        const value = button.dataset.filterValue || 'all';
+        if (!group || !button.classList.contains('active') || value === 'all') return;
+        activeFilters[group] = value;
       });
 
-      // Get active domains
-      const activeDomains = [...document.querySelectorAll('.filter-btn.active')]
-        .map(b => b.dataset.domain)
-        .filter(d => d !== 'all');
+      let visibleCount = 0;
 
-      // Filter cards
-      const showAll = activeDomains.length === 0 || 
-                      document.querySelector('.filter-btn[data-domain="all"]')?.classList.contains('active');
-      
-      document.querySelectorAll('[data-domains]').forEach(card => {
-        const cardDomains = card.dataset.domains.split(',');
-        card.style.display = showAll || activeDomains.some(d => cardDomains.includes(d)) 
-          ? '' : 'none';
+      cards.forEach((card) => {
+        const searchText = (card.dataset.searchText || '').toLowerCase();
+        const queryMatch = !query || searchText.includes(query);
+        const filterMatch = Object.entries(activeFilters).every(([group, value]) => cardMatchesFilter(card, group, value));
+        const isVisible = queryMatch && filterMatch;
+
+        card.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
+      });
+
+      if (emptyState) {
+        emptyState.hidden = visibleCount !== 0;
+      }
+    };
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = button.dataset.filterGroup;
+        if (!group) return;
+
+        collection.querySelectorAll(`.filter-btn[data-filter-group="${group}"]`).forEach((peer) => {
+          peer.classList.remove('active');
+          peer.setAttribute('aria-pressed', 'false');
+        });
+
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+        update();
       });
     });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', update);
+    }
+
+    update();
   });
 }
-
-// ── Knowledge Graph (D3.js) ──────────────────────────────────────────────────
 
 async function initGraph() {
   const container = document.getElementById('knowledge-graph');
@@ -163,7 +265,6 @@ async function initGraph() {
     return;
   }
 
-  // Load D3
   if (typeof d3 === 'undefined') {
     await new Promise((resolve) => {
       const script = document.createElement('script');
@@ -173,10 +274,19 @@ async function initGraph() {
     });
   }
 
-  renderForceGraph(container, graph);
+  const engine = await getSearchEngine();
+  renderForceGraph(container, graph, engine?.index || []);
 }
 
-function renderForceGraph(container, graph) {
+function buildGraphSummary(node) {
+  if (node.summary) return node.summary;
+  if (node.type === 'source') return 'A provenance node in the working library.';
+  if (node.type === 'capture') return 'An extraction note preserved before it becomes a reusable claim.';
+  if (node.type === 'artifact') return 'A public-facing output built from captures and atoms.';
+  return 'A reusable claim in the graph.';
+}
+
+function renderForceGraph(container, graph, searchIndex) {
   const width = container.clientWidth;
   const height = container.clientHeight;
   const styles = getComputedStyle(document.documentElement);
@@ -192,13 +302,25 @@ function renderForceGraph(container, graph) {
   const captureEdgeColor = '#b08f5e';
   const artifactEdgeColor = '#8b9681';
 
+  const lookup = new Map(searchIndex.map((item) => [`${item.type}:${item.id}`, item]));
+  const nodes = graph.nodes.map((node) => ({
+    ...node,
+    summary: lookup.get(node.id)?.body || '',
+  }));
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const adjacency = new Map(nodes.map((node) => [node.id, new Set()]));
+
+  graph.edges.forEach((edge) => {
+    adjacency.get(edge.source)?.add(edge.target);
+    adjacency.get(edge.target)?.add(edge.source);
+  });
+
   const svg = d3.select(container)
     .append('svg')
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [0, 0, width, height]);
 
-  // Colors by type
   const colorMap = {
     atom: atomColor,
     source: sourceColor,
@@ -219,62 +341,141 @@ function renderForceGraph(container, graph) {
     'complexity': '#89785d',
   };
 
-  // Build simulation
-  const simulation = d3.forceSimulation(graph.nodes)
-    .force('link', d3.forceLink(graph.edges)
-      .id(d => d.id)
-      .distance(d => {
-        if (d.type === 'related_source') return 120;
-        if (d.type === 'capture_to_atom' || d.type === 'captured_from_source') return 95;
-        if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return 90;
-        return 80;
+  const orderedDomains = [...new Set(
+    nodes.flatMap((node) => node.type === 'atom' ? (node.domain || []) : []).filter(Boolean),
+  )].sort((a, b) => {
+    const aIndex = Object.keys(domainColors).indexOf(a);
+    const bIndex = Object.keys(domainColors).indexOf(b);
+    const normalizedA = aIndex === -1 ? 999 : aIndex;
+    const normalizedB = bIndex === -1 ? 999 : bIndex;
+    if (normalizedA !== normalizedB) return normalizedA - normalizedB;
+    return a.localeCompare(b);
+  });
+
+  const edgeMultiplicity = new Map();
+  const edges = graph.edges.map((edge) => {
+    const pairKey = [edge.source, edge.target].sort().join('|');
+    const index = edgeMultiplicity.get(pairKey) || 0;
+    edgeMultiplicity.set(pairKey, index + 1);
+    return { ...edge, curveIndex: index };
+  });
+
+  const simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(edges)
+      .id((d) => d.id)
+      .distance((d) => {
+        if (d.type === 'related_source') return 150;
+        if (d.type === 'capture_to_atom' || d.type === 'captured_from_source') return 110;
+        if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return 104;
+        return 90;
       })
-      .strength(d => d.type === 'related_source' ? 0.18 : 0.32))
-    .force('charge', d3.forceManyBody().strength(-200))
+      .strength((d) => d.type === 'related_source' ? 0.14 : 0.28))
+    .force('charge', d3.forceManyBody().strength(-250))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collision', d3.forceCollide().radius(d => {
-      if (d.type === 'source') return 20;
-      if (d.type === 'capture') return 16;
-      if (d.type === 'artifact') return 14;
-      return 12 + (d.reuse_count || 0);
+    .force('cluster-x', d3.forceX((d) => clusterAnchor(d).x).strength((d) => d.type === 'atom' ? 0.045 : 0.07))
+    .force('cluster-y', d3.forceY((d) => clusterAnchor(d).y).strength((d) => d.type === 'atom' ? 0.038 : 0.055))
+    .force('collision', d3.forceCollide().radius((d) => {
+      if (d.type === 'source') return 24;
+      if (d.type === 'capture') return 18;
+      if (d.type === 'artifact') return 17;
+      return 14 + (d.reuse_count || 0) * 1.4;
     }));
 
-  // Edges
+  function nodeRadius(d) {
+    if (d.type === 'source') return 14;
+    if (d.type === 'capture') return 10;
+    if (d.type === 'artifact') return 9;
+    return 6 + (d.reuse_count || 0) * 2;
+  }
+
+  function clusterAnchor(node) {
+    const primaryDomain = (node.domain || [])[0] || '';
+    const domainIndex = orderedDomains.indexOf(primaryDomain);
+    const domainCount = Math.max(orderedDomains.length, 1);
+    const top = height * 0.18;
+    const bandHeight = height * 0.64;
+    const atomY = domainIndex >= 0
+      ? top + (bandHeight * (domainIndex + 0.5)) / domainCount
+      : height * 0.48;
+
+    if (node.type === 'source') return { x: width * 0.14, y: height * 0.24 };
+    if (node.type === 'capture') return { x: width * 0.34, y: height * 0.7 };
+    if (node.type === 'artifact') return { x: width * 0.86, y: height * 0.28 };
+    return { x: width * 0.62, y: atomY };
+  }
+
+  function edgeCurveOffset(edge) {
+    const sourceId = resolveNodeId(edge.source);
+    const targetId = resolveNodeId(edge.target);
+    const baseByType = {
+      related_source: 48,
+      captured_from_source: 26,
+      capture_to_atom: 22,
+      capture_to_artifact: 20,
+      artifact_from_atom: 24,
+      artifact_from_source: 28,
+      related: 18,
+    };
+    const base = baseByType[edge.type] || 16;
+    const hash = `${sourceId}|${targetId}`.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const sign = hash % 2 === 0 ? 1 : -1;
+    return sign * (base + edge.curveIndex * 10);
+  }
+
+  function buildEdgePath(edge) {
+    const source = edge.source;
+    const target = edge.target;
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const distance = Math.hypot(dx, dy) || 1;
+    const ux = dx / distance;
+    const uy = dy / distance;
+    const startX = source.x + ux * nodeRadius(source);
+    const startY = source.y + uy * nodeRadius(source);
+    const endX = target.x - ux * nodeRadius(target);
+    const endY = target.y - uy * nodeRadius(target);
+    const mx = (startX + endX) / 2;
+    const my = (startY + endY) / 2;
+    const offset = edgeCurveOffset(edge);
+    const nx = -uy;
+    const ny = ux;
+    const controlX = mx + nx * offset;
+    const controlY = my + ny * offset;
+    return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+  }
+
   const link = svg.append('g')
-    .selectAll('line')
-    .data(graph.edges)
-    .join('line')
-    .attr('stroke', d => {
+    .selectAll('path')
+    .data(edges)
+    .join('path')
+    .attr('fill', 'none')
+    .attr('stroke-linecap', 'round')
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke', (d) => {
       if (d.type === 'related_source') return sourceRelationColor;
       if (d.type === 'captured_from_source' || d.type === 'capture_to_atom') return captureEdgeColor;
       if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return artifactEdgeColor;
       return d.type === 'related' ? edgeStrongColor : edgeColor;
     })
-    .attr('stroke-width', d => {
+    .attr('stroke-width', (d) => {
       if (d.type === 'related_source') return 2;
       if (d.type === 'capture_to_atom' || d.type === 'captured_from_source') return 1.5;
       if (d.type === 'artifact_from_atom' || d.type === 'artifact_from_source' || d.type === 'capture_to_artifact') return 1.4;
       return d.type === 'related' ? 1.6 : 1.2;
     })
-    .attr('stroke-dasharray', d => {
+    .attr('stroke-dasharray', (d) => {
       if (d.type === 'related_source') return '6 4';
       if (d.type === 'artifact_from_source') return '3 3';
       return null;
     })
-    .attr('stroke-opacity', d => d.type === 'related_source' ? 0.85 : 0.78);
+    .attr('stroke-opacity', (d) => d.type === 'related_source' ? 0.85 : 0.78);
 
-  // Nodes
   const node = svg.append('g')
     .selectAll('circle')
-    .data(graph.nodes)
+    .data(nodes)
     .join('circle')
-    .attr('r', d => {
-      if (d.type === 'source') return 14;
-      if (d.type === 'capture') return 10;
-      if (d.type === 'artifact') return 9;
-      return 6 + (d.reuse_count || 0) * 2;
-    })
-    .attr('fill', d => {
+    .attr('r', (d) => nodeRadius(d))
+    .attr('fill', (d) => {
       if (d.type === 'source') return colorMap.source;
       if (d.type === 'capture') return colorMap.capture;
       if (d.type === 'artifact') return colorMap.artifact;
@@ -285,52 +486,45 @@ function renderForceGraph(container, graph) {
     .attr('stroke-width', 1.5)
     .style('cursor', 'pointer')
     .on('click', (_, d) => {
-      if (d.url) {
-        window.location.href = d.url;
-      }
+      selectedId = d.id;
+      updateInspector(d);
+      refreshVisibility();
     })
     .call(d3.drag()
       .on('start', dragstarted)
       .on('drag', dragged)
       .on('end', dragended));
 
-  // Labels
   const label = svg.append('g')
     .selectAll('text')
-    .data(graph.nodes)
+    .data(nodes)
     .join('text')
-    .text(d => d.label.length > 30 ? d.label.slice(0, 30) + '…' : d.label)
-    .attr('font-size', d => {
+    .text((d) => d.label.length > 30 ? `${d.label.slice(0, 30)}…` : d.label)
+    .attr('font-size', (d) => {
       if (d.type === 'source') return 11;
       if (d.type === 'capture' || d.type === 'artifact') return 10;
       return 9;
     })
     .attr('font-family', styles.getPropertyValue('--font-mono').trim() || "'IBM Plex Mono', monospace")
     .attr('fill', labelColor)
-    .attr('dx', d => d.type === 'source' ? 18 : 12)
+    .attr('dx', (d) => d.type === 'source' ? 18 : 12)
     .attr('dy', 4);
 
-  // Tooltip
-  node.append('title').text(d => d.label);
+  node.append('title').text((d) => d.label);
 
-  // Tick
   simulation.on('tick', () => {
     link
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
+      .attr('d', (d) => buildEdgePath(d));
 
     node
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y);
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
 
     label
-      .attr('x', d => d.x)
-      .attr('y', d => d.y);
+      .attr('x', (d) => d.x)
+      .attr('y', (d) => d.y);
   });
 
-  // Drag handlers
   function dragstarted(event) {
     if (!event.active) simulation.alphaTarget(0.3).restart();
     event.subject.fx = event.subject.x;
@@ -348,16 +542,131 @@ function renderForceGraph(container, graph) {
     event.subject.fy = null;
   }
 
-  // Zoom
   svg.call(d3.zoom()
     .extent([[0, 0], [width, height]])
     .scaleExtent([0.3, 4])
     .on('zoom', (event) => {
       svg.selectAll('g').attr('transform', event.transform);
     }));
-}
 
-// ── Utilities ────────────────────────────────────────────────────────────────
+  const filterState = { type: 'all', domain: 'all' };
+  let selectedId = null;
+
+  const inspectorTitle = document.getElementById('graph-inspector-title');
+  const inspectorSummary = document.getElementById('graph-inspector-summary');
+  const inspectorMeta = document.getElementById('graph-inspector-meta');
+  const inspectorTags = document.getElementById('graph-inspector-tags');
+  const inspectorLinks = document.getElementById('graph-inspector-links');
+  const inspectorActions = document.getElementById('graph-inspector-actions');
+
+  function resolveNodeId(value) {
+    return typeof value === 'object' ? value.id : value;
+  }
+
+  function nodeVisible(d) {
+    const matchesType = filterState.type === 'all' || d.type === filterState.type;
+    const matchesDomain = filterState.domain === 'all' || (d.domain || []).includes(filterState.domain);
+    return matchesType && matchesDomain;
+  }
+
+  function refreshVisibility() {
+    node
+      .attr('opacity', (d) => {
+        if (!nodeVisible(d)) return 0.14;
+        if (!selectedId) return 0.95;
+        return d.id === selectedId || adjacency.get(selectedId)?.has(d.id) ? 1 : 0.24;
+      })
+      .attr('stroke-width', (d) => d.id === selectedId ? 3 : 1.5);
+
+    label.attr('opacity', (d) => {
+      if (!nodeVisible(d)) return 0.08;
+      if (!selectedId) return 0.82;
+      return d.id === selectedId || adjacency.get(selectedId)?.has(d.id) ? 1 : 0.24;
+    });
+
+    link.attr('stroke-opacity', (d) => {
+      const sourceId = resolveNodeId(d.source);
+      const targetId = resolveNodeId(d.target);
+      const sourceNode = nodeById.get(sourceId);
+      const targetNode = nodeById.get(targetId);
+      if (!sourceNode || !targetNode || !nodeVisible(sourceNode) || !nodeVisible(targetNode)) return 0.05;
+      if (!selectedId) return d.type === 'related_source' ? 0.85 : 0.78;
+      return sourceId === selectedId || targetId === selectedId ? 0.98 : 0.16;
+    });
+  }
+
+  function updateInspector(nodeData) {
+    if (!inspectorTitle || !inspectorSummary || !inspectorMeta || !inspectorTags || !inspectorLinks || !inspectorActions) {
+      return;
+    }
+
+    const neighbors = [...(adjacency.get(nodeData.id) || [])]
+      .map((neighborId) => nodeById.get(neighborId))
+      .filter(Boolean)
+      .slice(0, 6);
+
+    inspectorTitle.textContent = nodeData.label;
+    inspectorSummary.textContent = buildGraphSummary(nodeData);
+
+    const metaBits = [
+      `<span class="graph-meta-pill">${escapeHtml(nodeData.type)}</span>`,
+    ];
+    if (nodeData.atom_type) metaBits.push(`<span class="graph-meta-pill">${escapeHtml(nodeData.atom_type)}</span>`);
+    if (nodeData.confidence) metaBits.push(`<span class="graph-meta-pill">${escapeHtml(nodeData.confidence)}</span>`);
+    if (typeof nodeData.reuse_count === 'number') metaBits.push(`<span class="graph-meta-pill">reuse ${nodeData.reuse_count}</span>`);
+    inspectorMeta.innerHTML = metaBits.join('');
+
+    inspectorTags.innerHTML = (nodeData.domain || []).map((domain) => `<span class="tag">${escapeHtml(domain)}</span>`).join('');
+
+    inspectorLinks.innerHTML = neighbors.length
+      ? `
+        <p class="graph-inspector__label">Connected items</p>
+        <div class="graph-link-list">
+          ${neighbors.map((neighbor) => `<a href="${escapeHtml(neighbor.url || '#')}">${escapeHtml(neighbor.label)}</a>`).join('')}
+        </div>
+      `
+      : '<p class="graph-inspector__label">No connected items yet.</p>';
+
+    inspectorActions.innerHTML = `
+      ${nodeData.url ? `<a class="button-primary" href="${escapeHtml(nodeData.url)}">Open details</a>` : ''}
+      <button class="button-secondary button-secondary--plain" type="button" id="graph-clear-selection">Clear selection</button>
+    `;
+
+    const clearButton = document.getElementById('graph-clear-selection');
+    if (clearButton) {
+      clearButton.addEventListener('click', () => {
+        selectedId = null;
+        inspectorTitle.textContent = 'Select a node';
+        inspectorSummary.textContent = 'Click a node to inspect its summary, provenance, and direct neighborhood. The graph is for tracing ideas, not just seeing them.';
+        inspectorMeta.innerHTML = '';
+        inspectorTags.innerHTML = '';
+        inspectorLinks.innerHTML = '';
+        inspectorActions.innerHTML = '';
+        refreshVisibility();
+      });
+    }
+  }
+
+  document.querySelectorAll('[data-graph-filter-group]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const group = button.dataset.graphFilterGroup;
+      const value = button.dataset.graphFilterValue || 'all';
+      if (!group) return;
+
+      document.querySelectorAll(`[data-graph-filter-group="${group}"]`).forEach((peer) => {
+        peer.classList.remove('active');
+        peer.setAttribute('aria-pressed', 'false');
+      });
+
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+      filterState[group] = value;
+      refreshVisibility();
+    });
+  });
+
+  refreshVisibility();
+}
 
 function applyLegendColors() {
   const domainColors = {
@@ -379,16 +688,9 @@ function applyLegendColors() {
   });
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// ── Init ─────────────────────────────────────────────────────────────────────
-
 document.addEventListener('DOMContentLoaded', () => {
   applyLegendColors();
-  initSearch();
-  initFilters();
+  initResultSearches();
+  initCollectionFiltering();
   initGraph();
 });

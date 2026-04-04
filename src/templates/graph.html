@@ -4,27 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Graph · {{ site_title }}</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a href="./" class="site-logo" aria-label="{{ site_title }} home">
-        <span class="site-logo__icon" aria-hidden="true">🧠</span>
-        <span>{{ site_title }}</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="./">Overview</a>
-        <a href="./graph.html" class="active">Graph</a>
-        <a href="./sources.html">Sources</a>
-        <a href="./captures.html">Captures</a>
-        <a href="./atoms.html">Atoms</a>
-        <a href="./artifacts.html">Artifacts</a>
-      </nav>
-    </div>
-  </header>
+  {% set page_section = 'graph' %}
+  {% set page_key = 'graph' %}
+  {% include 'partials/header.html' %}
 
   <main class="container container--wide page-shell" id="main-content">
 
@@ -82,49 +69,77 @@
         </article>
       </div>
 
-      <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources, captures, atoms, and artifacts">
-        <div class="graph-legend">
-          <div class="graph-legend__item">
-            <span class="graph-legend__dot graph-legend__dot--source"></span>
-            <span>Source</span>
+      <div class="graph-workspace">
+        <section class="graph-stage section-shell section-shell--feature">
+          <div class="graph-toolbar">
+            <div class="graph-filter-group" aria-label="Filter by type">
+              <button class="filter-btn active" type="button" data-graph-filter-group="type" data-graph-filter-value="all" aria-pressed="true">All</button>
+              <button class="filter-btn" type="button" data-graph-filter-group="type" data-graph-filter-value="source" aria-pressed="false">Sources</button>
+              <button class="filter-btn" type="button" data-graph-filter-group="type" data-graph-filter-value="capture" aria-pressed="false">Captures</button>
+              <button class="filter-btn" type="button" data-graph-filter-group="type" data-graph-filter-value="atom" aria-pressed="false">Atoms</button>
+              <button class="filter-btn" type="button" data-graph-filter-group="type" data-graph-filter-value="artifact" aria-pressed="false">Artifacts</button>
+            </div>
+            {% if domain_summary %}
+            <div class="graph-filter-group" aria-label="Filter by domain">
+              <button class="filter-btn active" type="button" data-graph-filter-group="domain" data-graph-filter-value="all" aria-pressed="true">All domains</button>
+              {% for domain in domain_summary[:5] %}
+              <button class="filter-btn" type="button" data-graph-filter-group="domain" data-graph-filter-value="{{ domain.name }}" aria-pressed="false">{{ domain.name }}</button>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          <div class="graph-legend__item">
-            <span class="graph-legend__dot graph-legend__dot--capture"></span>
-            <span>Capture</span>
+
+          <div class="graph-container" id="knowledge-graph" role="img" aria-label="Interactive knowledge graph showing sources, captures, atoms, and artifacts">
+            <div class="graph-legend">
+              <div class="graph-legend__item">
+                <span class="graph-legend__dot graph-legend__dot--source"></span>
+                <span>Source</span>
+              </div>
+              <div class="graph-legend__item">
+                <span class="graph-legend__dot graph-legend__dot--capture"></span>
+                <span>Capture</span>
+              </div>
+              <div class="graph-legend__item">
+                <span class="graph-legend__dot graph-legend__dot--atom"></span>
+                <span>Atom</span>
+              </div>
+              <div class="graph-legend__item">
+                <span class="graph-legend__dot graph-legend__dot--artifact"></span>
+                <span>Artifact</span>
+              </div>
+              <div class="graph-legend__item">
+                <span class="graph-legend__line graph-legend__line--source"></span>
+                <span>Related source</span>
+              </div>
+              {% for domain in domain_summary[:5] %}
+              <div class="graph-legend__item">
+                <span class="graph-legend__dot graph-legend__dot--domain" data-domain-color="{{ domain.name }}"></span>
+                <span>{{ domain.name }}</span>
+              </div>
+              {% endfor %}
+            </div>
           </div>
-          <div class="graph-legend__item">
-            <span class="graph-legend__dot graph-legend__dot--atom"></span>
-            <span>Atom</span>
-          </div>
-          <div class="graph-legend__item">
-            <span class="graph-legend__dot graph-legend__dot--artifact"></span>
-            <span>Artifact</span>
-          </div>
-          <div class="graph-legend__item">
-            <span class="graph-legend__line graph-legend__line--source"></span>
-            <span>Related source</span>
-          </div>
-          {% for domain in domain_summary[:5] %}
-          <div class="graph-legend__item">
-            <span class="graph-legend__dot graph-legend__dot--domain" data-domain-color="{{ domain.name }}"></span>
-            <span>{{ domain.name }}</span>
-          </div>
-          {% endfor %}
-        </div>
+        </section>
+
+        <aside class="graph-inspector section-shell section-shell--rail section-shell--system">
+          <p class="spotlight-card__eyebrow">Inspector</p>
+          <h2 class="section__title" id="graph-inspector-title">Select a node</h2>
+          <p class="graph-inspector__summary" id="graph-inspector-summary">Click a node to inspect its summary, provenance, and direct neighborhood. The graph is for tracing ideas, not just seeing them.</p>
+          <div class="graph-inspector__meta" id="graph-inspector-meta"></div>
+          <div class="graph-inspector__tags" id="graph-inspector-tags"></div>
+          <div class="graph-inspector__links" id="graph-inspector-links"></div>
+          <div class="graph-inspector__actions" id="graph-inspector-actions"></div>
+        </aside>
       </div>
 
       <p class="graph-note">
-        Drag to reposition · Scroll to zoom · Click a node to open its detail page · Larger atom nodes = higher reuse count · Dashed links connect related sources
+        Drag to reposition · Scroll to zoom · Click a node to inspect it · Larger atom nodes = higher reuse count · Dashed links connect related sources
       </p>
     </section>
 
   </main>
 
-  <footer class="site-footer">
-    <p class="site-footer__text">
-      <strong>{{ site_title }}</strong> by {{ site_author }} · Last built {{ now }}
-    </p>
-  </footer>
+  {% include 'partials/footer.html' %}
 
   <script src="./js/app.js"></script>
 </body>
