@@ -1373,7 +1373,7 @@ def build_template_context() -> dict[str, Any]:
 def render_pages(context: dict[str, Any]) -> None:
     environment = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
 
-    for template_name in ("index.html", "graph.html", "atoms.html", "captures.html"):
+    for template_name in ("index.html", "graph.html", "sources.html", "captures.html", "atoms.html", "artifacts.html"):
         html = environment.get_template(template_name).render(**context)
         output_path = DIST_DIR / template_name
         output_path.write_text(html, encoding="utf-8")
@@ -1414,8 +1414,10 @@ def main() -> int:
     print(f"  [ok] Search index: {len(load_json(DIST_DIR / 'data' / 'search_index.json', []))} entries")
     print("  [ok] index.html")
     print("  [ok] graph.html")
+    print("  [ok] sources.html")
     print("  [ok] captures.html")
     print("  [ok] atoms.html")
+    print("  [ok] artifacts.html")
     print(f"  [ok] Markdown content exported to {CONTENT_DIR}")
     print("=" * 40)
     print(f"Built to {DIST_DIR}")

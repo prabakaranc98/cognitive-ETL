@@ -44,9 +44,11 @@ class SmokeTests(unittest.TestCase):
 
             self.assertIn("Built to", result.stdout)
             self.assertTrue((dist_dir / "index.html").exists())
+            self.assertTrue((dist_dir / "sources.html").exists())
             self.assertTrue((dist_dir / "captures.html").exists())
             self.assertTrue((dist_dir / "graph.html").exists())
             self.assertTrue((dist_dir / "atoms.html").exists())
+            self.assertTrue((dist_dir / "artifacts.html").exists())
             self.assertTrue((dist_dir / "source-src-1.html").exists())
             self.assertTrue((dist_dir / "capture-cap-1.html").exists())
             self.assertTrue((dist_dir / "atom-atm-1.html").exists())

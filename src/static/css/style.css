@@ -101,8 +101,8 @@ summary:focus-visible {
 
 p {
   margin-bottom: 1.2rem;
-  text-align: justify;
-  hyphens: auto;
+  text-align: left;
+  hyphens: none;
   overflow-wrap: break-word;
 }
 
@@ -497,8 +497,8 @@ h1, h2, h3, h4 {
   padding: 1.5rem;
   border: 1px solid var(--color-border-light);
   border-radius: 22px;
-  background: rgba(250, 246, 238, 0.85);
-  box-shadow: var(--shadow-card);
+  background: rgba(250, 246, 238, 0.92);
+  box-shadow: 0 8px 18px rgba(111, 92, 66, 0.05);
 }
 
 .section-shell::before {
@@ -513,35 +513,35 @@ h1, h2, h3, h4 {
 }
 
 .section-shell--search {
-  background: linear-gradient(180deg, rgba(246, 244, 240, 0.95), rgba(249, 244, 235, 0.92));
+  background: rgba(249, 244, 235, 0.96);
 }
 
 .section-shell--model {
-  background: linear-gradient(180deg, rgba(245, 240, 235, 0.92), rgba(247, 242, 232, 0.9));
+  background: rgba(247, 242, 232, 0.95);
 }
 
 .section-shell--feature {
-  background: linear-gradient(180deg, rgba(244, 234, 225, 0.74), rgba(250, 246, 238, 0.94));
+  background: rgba(247, 241, 235, 0.95);
 }
 
 .section-shell--artifact {
-  background: linear-gradient(180deg, rgba(243, 236, 221, 0.7), rgba(250, 246, 238, 0.92));
+  background: rgba(247, 243, 235, 0.95);
 }
 
 .section-shell--source {
-  background: linear-gradient(180deg, rgba(242, 238, 231, 0.96), rgba(248, 244, 236, 0.95));
+  background: rgba(246, 242, 234, 0.95);
 }
 
 .section-shell--capture {
-  background: linear-gradient(180deg, rgba(247, 241, 229, 0.96), rgba(249, 244, 235, 0.95));
+  background: rgba(248, 244, 235, 0.95);
 }
 
 .section-shell--atom {
-  background: linear-gradient(180deg, rgba(246, 239, 235, 0.95), rgba(249, 244, 238, 0.96));
+  background: rgba(248, 243, 238, 0.95);
 }
 
 .section-shell--system {
-  background: linear-gradient(180deg, rgba(244, 244, 241, 0.95), rgba(250, 247, 241, 0.96));
+  background: rgba(249, 247, 241, 0.96);
 }
 
 .section-shell--artifact::before {
@@ -600,6 +600,108 @@ h1, h2, h3, h4 {
 
 .filter-bar--collection {
   margin-bottom: 1.35rem;
+}
+
+.workflow-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.workflow-step {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 14px;
+  background: rgba(250, 246, 238, 0.88);
+}
+
+.workflow-step__index {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+}
+
+.workflow-step__title {
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+
+.workflow-step__body {
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.workflow-step--source {
+  border-top: 2px solid rgba(123, 106, 82, 0.5);
+}
+
+.workflow-step--capture {
+  border-top: 2px solid rgba(169, 133, 79, 0.5);
+}
+
+.workflow-step--atom {
+  border-top: 2px solid rgba(124, 93, 118, 0.5);
+}
+
+.workflow-step--artifact {
+  border-top: 2px solid rgba(111, 123, 97, 0.5);
+}
+
+.workspace-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.workspace-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.workspace-list__item:last-child {
+  border-bottom: none;
+}
+
+.workspace-list__main {
+  min-width: 0;
+}
+
+.workspace-list__title {
+  display: block;
+  margin-bottom: 0.22rem;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  line-height: 1.35;
+}
+
+.workspace-list__body {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.workspace-list__side {
+  display: grid;
+  justify-items: end;
+  align-content: start;
+  gap: 0.18rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
 }
 
 .panel,
@@ -1311,6 +1413,10 @@ pre {
 }
 
 @media (max-width: 860px) {
+  .workflow-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .overview-columns {
     grid-template-columns: 1fr;
   }
@@ -1350,6 +1456,18 @@ pre {
 @media (max-width: 640px) {
   html {
     font-size: 17px;
+  }
+
+  .workflow-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-list__item {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-list__side {
+    justify-items: start;
   }
 
   .graph-container {

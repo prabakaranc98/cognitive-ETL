@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sources · {{ site_title }}</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="./" class="site-logo" aria-label="{{ site_title }} home">
+        <span class="site-logo__icon" aria-hidden="true">🧠</span>
+        <span>{{ site_title }}</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="./">Overview</a>
+        <a href="./graph.html">Graph</a>
+        <a href="./sources.html" class="active">Sources</a>
+        <a href="./captures.html">Captures</a>
+        <a href="./atoms.html">Atoms</a>
+        <a href="./artifacts.html">Artifacts</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container container--wide page-shell" id="main-content">
+    <section class="hero">
+      <h1 class="hero__title">Sources</h1>
+      <p class="hero__subtitle">{{ sources | length }} source{{ '' if sources | length == 1 else 's' }} in the working library. This is the provenance layer: books, papers, talks, and other inputs that feed the rest of the system.</p>
+      <div class="hero-meta">
+        <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
+        <span class="hero-meta__pill">{{ stats.total_captures }} capture{{ '' if stats.total_captures == 1 else 's' }}</span>
+        <span class="hero-meta__pill">{{ stats.total_atoms }} atom{{ '' if stats.total_atoms == 1 else 's' }}</span>
+      </div>
+    </section>
+
+    <section class="section section-shell section-shell--source">
+      <div class="search-box search-box--collection">
+        <label class="sr-only" for="search-input">Search sources</label>
+        <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-box__input" id="search-input" type="text" placeholder="Search sources…">
+      </div>
+      <div id="search-results" aria-live="polite"></div>
+
+      {% set all_domains = [] %}
+      {% for source in sources %}
+        {% for d in (source.Domain or []) %}
+          {% if d not in all_domains %}
+            {% if all_domains.append(d) %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% if all_domains %}
+      <div class="filter-bar filter-bar--collection">
+        <button class="filter-btn active" data-domain="all" aria-pressed="true">All</button>
+        {% for domain in all_domains | sort %}
+        <button class="filter-btn" data-domain="{{ domain }}" aria-pressed="false">{{ domain }}</button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if sources %}
+      <div class="card-grid card-grid--balanced card-grid--sources">
+        {% for source in sources %}
+        <article class="card card--interactive card--source" data-domains="{{ (source.Domain or []) | join(',') }}">
+          <span class="card__badge">{{ source.Type or 'Source' }}</span>
+          <h3 class="card__title">{{ source.Name or 'Untitled' }}</h3>
+          <p class="card__body">
+            {% if source.Author %}{{ source.Author }}{% endif %}
+            {% if source['Key Takeaway'] %}
+            {% if source.Author %} · {% endif %}{{ source['Key Takeaway'] }}
+            {% endif %}
+          </p>
+          <div class="progress">
+            <div class="progress__bar" style="width: {{ '%0.0f' % (source.progress_ratio * 100) }}%;"></div>
+          </div>
+          <div class="card__details">
+            <span>{{ source.progress_label }}</span>
+            <span>{{ source.capture_count }} capture{{ '' if source.capture_count == 1 else 's' }}</span>
+            <span>{{ source.atom_count }} atom{{ '' if source.atom_count == 1 else 's' }}</span>
+            <span>{{ source.artifact_count }} artifact{{ '' if source.artifact_count == 1 else 's' }}</span>
+          </div>
+          <div class="card__meta">
+            <span class="tag tag--accent">{{ source.Status or 'Queue' }}</span>
+            {% for domain in (source.Domain or []) %}
+            <span class="tag">{{ domain }}</span>
+            {% endfor %}
+          </div>
+          <div class="card__actions">
+            <a class="card__action" href="{{ source.detail_href }}">Open details</a>
+            {% if source.public_url %}
+            <a class="card__action card__action--subtle" href="{{ source.public_url }}" target="_blank" rel="noreferrer">Public link</a>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state__icon">📚</div>
+        <h3 class="empty-state__title">No sources yet</h3>
+        <p class="empty-state__body">Add a book, paper, article, or conversation to start building the graph.</p>
+      </div>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer__text">
+      <strong>{{ site_title }}</strong> by {{ site_author }} · Last built {{ now }}
+    </p>
+  </footer>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>

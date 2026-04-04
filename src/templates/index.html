@@ -20,10 +20,10 @@
       <nav class="site-nav" aria-label="Primary">
         <a href="./" class="active">Overview</a>
         <a href="./graph.html">Graph</a>
-        <a href="#sources-list">Sources</a>
+        <a href="./sources.html">Sources</a>
         <a href="./captures.html">Captures</a>
         <a href="./atoms.html">Atoms</a>
-        <a href="#artifacts-list">Artifacts</a>
+        <a href="./artifacts.html">Artifacts</a>
       </nav>
     </div>
   </header>
@@ -91,26 +91,26 @@
         <span class="section__link">Public knowledge ETL</span>
       </div>
       <p class="section__note">The system separates raw intake from reusable thought. Sources are inputs, captures preserve rough extraction, atoms hold defensible ideas, and artifacts are the public outputs.</p>
-      <div class="card-grid">
-        <article class="card card--stage card--source">
-          <span class="card__badge">1. Source</span>
-          <h3 class="card__title">Something worth learning from</h3>
-          <p class="card__body">Books, papers, talks, conversations, and other inputs enter here with status, domain, progress, and provenance.</p>
+      <div class="workflow-strip">
+        <article class="workflow-step workflow-step--source">
+          <span class="workflow-step__index">01</span>
+          <h3 class="workflow-step__title">Source</h3>
+          <p class="workflow-step__body">Something worth learning from.</p>
         </article>
-        <article class="card card--stage card--capture">
-          <span class="card__badge">2. Capture</span>
-          <h3 class="card__title">The first extraction surface</h3>
-          <p class="card__body">Highlights, fragments, reactions, excerpts, and rough synthesis get preserved before they are compressed into cleaner ideas.</p>
+        <article class="workflow-step workflow-step--capture">
+          <span class="workflow-step__index">02</span>
+          <h3 class="workflow-step__title">Capture</h3>
+          <p class="workflow-step__body">Rough extraction before abstraction.</p>
         </article>
-        <article class="card card--stage card--atom">
-          <span class="card__badge">3. Atom</span>
-          <h3 class="card__title">Reusable unit of thought</h3>
-          <p class="card__body">Atoms hold claims, mechanisms, boundaries, and provenance so the graph compounds instead of turning into a stack of summaries.</p>
+        <article class="workflow-step workflow-step--atom">
+          <span class="workflow-step__index">03</span>
+          <h3 class="workflow-step__title">Atom</h3>
+          <p class="workflow-step__body">Reusable claim with provenance and boundaries.</p>
         </article>
-        <article class="card card--stage card--artifact">
-          <span class="card__badge">4. Artifact</span>
-          <h3 class="card__title">Public-facing output</h3>
-          <p class="card__body">Slides, notes, and other public artifacts turn internal learning into something legible and useful for anyone else.</p>
+        <article class="workflow-step workflow-step--artifact">
+          <span class="workflow-step__index">04</span>
+          <h3 class="workflow-step__title">Artifact</h3>
+          <p class="workflow-step__body">Public output that makes the thinking legible.</p>
         </article>
       </div>
     </section>
@@ -182,16 +182,16 @@
           {% endif %}
         </section>
 
-        <section class="section section-shell section-shell--artifact" id="artifacts-list">
+        <section class="section section-shell section-shell--artifact">
           <div class="section__header">
-            <h2 class="section__title">Artifacts</h2>
-            <span class="section__link">{{ artifacts | length }} total</span>
+            <h2 class="section__title">Recent artifacts</h2>
+            <a class="section__link" href="./artifacts.html">Browse all artifacts</a>
           </div>
           <p class="section__note">Public outputs are the clearest proof that the system is producing reusable work, not just storing notes.</p>
 
           {% if artifacts %}
           <div class="card-grid card-grid--balanced card-grid--artifacts">
-            {% for artifact in artifacts %}
+            {% for artifact in artifacts[:3] %}
             <article class="card card--interactive card--artifact" data-domains="{{ (artifact.Domain or []) | join(',') }}">
               <span class="card__badge">{{ artifact.Format or 'Artifact' }}</span>
               <h3 class="card__title">{{ artifact.Name or 'Untitled' }}</h3>
@@ -270,55 +270,26 @@
           {% endif %}
         </section>
 
-        <section class="section section-shell section-shell--source section-shell--rail" id="sources-list">
+        <section class="section section-shell section-shell--source section-shell--rail">
       <div class="section__header">
-        <h2 class="section__title">Sources</h2>
-        <span class="section__link">{{ sources | length }} total</span>
+        <h2 class="section__title">Sources in motion</h2>
+        <a class="section__link" href="./sources.html">Open source library</a>
       </div>
-      <p class="section__note">The library layer tracks provenance and reading progress. Inputs stay visible, but outputs stay primary.</p>
+      <p class="section__note">Inputs stay visible, but only as a compact working library on the overview.</p>
 
       {% if sources %}
-      <div class="card-grid card-grid--balanced card-grid--sources">
-        {% for source in sources %}
-        <article class="card card--interactive card--source" data-domains="{{ (source.Domain or []) | join(',') }}">
-          <span class="card__badge">{{ source.Type or 'Source' }}</span>
-          <h3 class="card__title">{{ source.Name or 'Untitled' }}</h3>
-          <p class="card__body">
-            {% if source.Author %}{{ source.Author }}{% endif %}
-            {% if source['Key Takeaway'] %}
-            {% if source.Author %} · {% endif %}{{ source['Key Takeaway'] }}
-            {% endif %}
-          </p>
-          <div class="progress">
-            <div class="progress__bar" style="width: {{ '%0.0f' % (source.progress_ratio * 100) }}%;"></div>
+      <div class="workspace-list">
+        {% for source in sources[:4] %}
+        <a class="workspace-list__item" href="{{ source.detail_href }}">
+          <div class="workspace-list__main">
+            <strong class="workspace-list__title">{{ source.Name }}</strong>
+            <p class="workspace-list__body">{{ source.Author or 'Unknown' }}{% if source['Key Takeaway'] %} · {{ source['Key Takeaway'] }}{% endif %}</p>
           </div>
-          <div class="card__details">
-            <span>{{ source.progress_label }}</span>
-            <span>{{ source.capture_count }} capture{{ '' if source.capture_count == 1 else 's' }}</span>
-            <span>{{ source.atom_count }} linked atom{{ '' if source.atom_count == 1 else 's' }}</span>
-            <span>{{ source.artifact_count }} artifact{{ '' if source.artifact_count == 1 else 's' }}</span>
-            <span>{{ source.related_source_count }} related source{{ '' if source.related_source_count == 1 else 's' }}</span>
+          <div class="workspace-list__side">
+            <span>{{ source.Status or 'Queue' }}</span>
+            <small>{{ source.progress_label }}</small>
           </div>
-          <div class="card__meta">
-            <span class="tag tag--accent">{{ source.Status or 'Queue' }}</span>
-            {% for domain in (source.Domain or []) %}
-            <span class="tag">{{ domain }}</span>
-            {% endfor %}
-          </div>
-          {% if source.related_sources_info %}
-          <div class="related-links" aria-label="Related sources">
-            {% for related_source in source.related_sources_info %}
-            <a class="tag tag--link" href="{{ related_source.url }}">{{ related_source.name }}</a>
-            {% endfor %}
-          </div>
-          {% endif %}
-          <div class="card__actions">
-            <a class="card__action" href="{{ source.detail_href }}">Open details</a>
-            {% if source.public_url %}
-            <a class="card__action card__action--subtle" href="{{ source.public_url }}" target="_blank" rel="noreferrer">Public link</a>
-            {% endif %}
-          </div>
-        </article>
+        </a>
         {% endfor %}
       </div>
       {% else %}
@@ -330,40 +301,26 @@
       {% endif %}
         </section>
 
-        <section class="section section-shell section-shell--capture section-shell--rail" id="captures-list">
+        <section class="section section-shell section-shell--capture section-shell--rail">
       <div class="section__header">
-        <h2 class="section__title">Captures</h2>
+        <h2 class="section__title">Capture queue</h2>
         <a class="section__link" href="./captures.html">Browse all captures</a>
       </div>
-      <p class="section__note">Captures are deliberately rough. They hold highlights, questions, excerpts, and fragments before compression.</p>
+      <p class="section__note">Recent extractions stay concise here. The full capture workspace lives on its own page.</p>
 
       {% if captures %}
-      <div class="card-grid card-grid--balanced card-grid--captures">
+      <div class="workspace-list">
         {% for capture in captures[:6] %}
-        <article class="card card--interactive card--capture" data-domains="{{ (capture.Domain or []) | join(',') }}">
-          <span class="card__badge">{{ capture.display_type }}</span>
-          <h3 class="card__title">{{ capture.display_title }}</h3>
-          {% if capture.summary %}
-          <p class="card__body">{{ capture.summary }}</p>
-          {% endif %}
-          <div class="card__details">
+        <a class="workspace-list__item workspace-list__item--capture" href="{{ capture.detail_href }}">
+          <div class="workspace-list__main">
+            <strong class="workspace-list__title">{{ capture.display_title }}</strong>
+            <p class="workspace-list__body">{{ capture.summary or capture.source_summary }}</p>
+          </div>
+          <div class="workspace-list__side">
             <span>{{ capture.display_status }}</span>
-            <span>{{ capture.source_count }} source{{ '' if capture.source_count == 1 else 's' }}</span>
-            <span>{{ capture.atom_count }} atom{{ '' if capture.atom_count == 1 else 's' }}</span>
-            <span>{{ capture.artifact_count }} artifact{{ '' if capture.artifact_count == 1 else 's' }}</span>
+            <small>{{ capture.atom_count }} atom{{ '' if capture.atom_count == 1 else 's' }}</small>
           </div>
-          <div class="card__meta">
-            {% for domain in (capture.Domain or []) %}
-            <span class="tag">{{ domain }}</span>
-            {% endfor %}
-          </div>
-          <div class="card__actions">
-            <a class="card__action" href="{{ capture.detail_href }}">Open</a>
-            {% if capture.public_url %}
-            <a class="card__action card__action--subtle" href="{{ capture.public_url }}" target="_blank" rel="noreferrer">Public link</a>
-            {% endif %}
-          </div>
-        </article>
+        </a>
         {% endfor %}
       </div>
       {% else %}
