@@ -4,7 +4,12 @@
     "url": "https://www.notion.so/Toward-CRL-Sch-lkopf-et-al-2021-Key-Claims-Architecture-33764dbaf92b81899312cb9e1d36c726",
     "created_time": "2026-04-03T19:36:00.000Z",
     "last_edited_time": "2026-04-03T19:36:00.000Z",
-    "Capture Context": [],
+    "Capture Context": [
+      "33764dba-f92b-813e-9682-eeb263905a76",
+      "33764dba-f92b-81c3-bfa8-e632bc6caef6",
+      "33764dba-f92b-816e-8ad3-c94e7cd268a4",
+      "33764dba-f92b-812c-a114-c6d21800a919"
+    ],
     "Domain": [
       "causal inference",
       "deep learning"
@@ -26,6 +31,62 @@
     "Artifact URL": null,
     "Date Shipped": "2026-04-03",
     "Name": "Toward CRL: Sch\u00f6lkopf et al. 2021 \u2014 Key Claims & Architecture",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33864dba-f92b-8107-a452-c337909495e2",
+    "url": "https://www.notion.so/Thinking-Fast-and-Slow-heuristics-fluency-and-dual-process-judgment-33864dbaf92b8107a452c337909495e2",
+    "created_time": "2026-04-04T16:52:00.000Z",
+    "last_edited_time": "2026-04-04T16:52:00.000Z",
+    "Capture Context": [
+      "33864dba-f92b-81f6-995e-d192668f50ac"
+    ],
+    "Domain": [
+      "economics"
+    ],
+    "Built From": [
+      "33864dba-f92b-810a-b68e-c5a3d29cc5a2"
+    ],
+    "Format": "One-Pager",
+    "Status": "Drafting",
+    "Points": 2,
+    "Chapter/Section": "Part I \u2014 Two Systems",
+    "Source": [
+      "33864dba-f92b-81ec-bd08-cc4f05c4d358"
+    ],
+    "Artifact ID": "ART-2",
+    "Artifact URL": null,
+    "Date Shipped": null,
+    "Name": "Thinking, Fast and Slow \u2014 heuristics, fluency, and dual-process judgment",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33864dba-f92b-8188-8105-d7e542dc3782",
+    "url": "https://www.notion.so/The-Book-of-Why-intervention-counterfactuals-and-causal-explanation-33864dbaf92b81888105d7e542dc3782",
+    "created_time": "2026-04-04T16:52:00.000Z",
+    "last_edited_time": "2026-04-04T16:52:00.000Z",
+    "Capture Context": [
+      "33864dba-f92b-81e9-90b8-ccb9c98cdc55"
+    ],
+    "Domain": [
+      "causal inference"
+    ],
+    "Built From": [
+      "33864dba-f92b-81e3-b388-ca1c7044476a"
+    ],
+    "Format": "One-Pager",
+    "Status": "Drafting",
+    "Points": 2,
+    "Chapter/Section": "Ladder of Causation / Counterfactuals",
+    "Source": [
+      "33764dba-f92b-81a5-bb86-f0477cc08a67"
+    ],
+    "Artifact ID": "ART-3",
+    "Artifact URL": null,
+    "Date Shipped": null,
+    "Name": "The Book of Why \u2014 intervention, counterfactuals, and causal explanation",
     "content": [],
     "content_plain": ""
   }

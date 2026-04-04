@@ -27,12 +27,17 @@ def parse_datetime(value: str | None) -> datetime:
         return datetime.min.replace(tzinfo=timezone.utc)
 
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError:
         try:
-            return datetime.fromisoformat(f"{value}T00:00:00+00:00")
+            moment = datetime.fromisoformat(f"{value}T00:00:00+00:00")
         except ValueError:
             return datetime.min.replace(tzinfo=timezone.utc)
+
+    if moment.tzinfo is None:
+        return moment.replace(tzinfo=timezone.utc)
+
+    return moment.astimezone(timezone.utc)
 
 
 def format_last_synced(value: str | None) -> str:

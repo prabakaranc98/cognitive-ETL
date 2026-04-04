@@ -4,7 +4,9 @@
     "url": "https://www.notion.so/Causal-representations-should-be-invariant-across-environments-33764dbaf92b8111b435f49447d94d2f",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
-    "Capture Context": [],
+    "Capture Context": [
+      "33764dba-f92b-81c3-bfa8-e632bc6caef6"
+    ],
     "Source Quote": "Causal models can be seen as the correct abstraction level for generalizing across domains.",
     "Because": "The ICM principle states causal generative mechanisms are autonomous modules \u2014 changing one does not affect others. Representations aligned with these mechanisms inherit their invariance.",
     "Related Atoms": [
@@ -36,7 +38,9 @@
     "url": "https://www.notion.so/The-Independent-Causal-Mechanisms-principle-causal-generative-processes-are-modular-and-autonomous-33764dbaf92b8126ac21f0a470a1818b",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
-    "Capture Context": [],
+    "Capture Context": [
+      "33764dba-f92b-813e-9682-eeb263905a76"
+    ],
     "Source Quote": "The mechanisms of the causal generative model are autonomous and do not inform or influence each other.",
     "Because": "Nature's generative process factorizes into independent modules corresponding to edges in the causal graph. This is a structural assumption about how the world generates data.",
     "Related Atoms": [
@@ -66,7 +70,9 @@
     "url": "https://www.notion.so/Multi-environment-data-provides-the-supervision-signal-for-causal-representation-learning-33764dbaf92b81d1aefdfe8357611ebe",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T21:12:00.000Z",
-    "Capture Context": [],
+    "Capture Context": [
+      "33764dba-f92b-812c-a114-c6d21800a919"
+    ],
     "Source Quote": "Distribution shifts correspond to local interventions on the causal model, providing a natural supervision signal.",
     "Because": "Single-environment data is ambiguous \u2014 both causal and spurious features predict equally well. Multiple environments break this symmetry because only invariant features persist.",
     "Related Atoms": [
@@ -97,7 +103,9 @@
     "url": "https://www.notion.so/Disentanglement-alone-is-insufficient-without-causal-structure-33764dbaf92b81e79a3dd7a7d4020142",
     "created_time": "2026-04-03T19:34:00.000Z",
     "last_edited_time": "2026-04-03T19:34:00.000Z",
-    "Capture Context": [],
+    "Capture Context": [
+      "33764dba-f92b-816e-8ad3-c94e7cd268a4"
+    ],
     "Source Quote": "Without further assumptions, unsupervised disentanglement is fundamentally impossible.",
     "Because": "Disentanglement methods optimize for statistical independence, but independent components can be rotated arbitrarily without changing the likelihood. Only causal structure breaks this symmetry.",
     "Related Atoms": [
@@ -121,6 +129,96 @@
     "Reuse Count": 0,
     "Definition": "Learning statistically independent latent factors does not guarantee that factors correspond to true causal variables or support interventional reasoning.",
     "Claim": "Disentanglement alone is insufficient without causal structure",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33864dba-f92b-810a-b68e-c5a3d29cc5a2",
+    "url": "https://www.notion.so/Fast-cognition-optimizes-for-coherent-stories-before-careful-accuracy-checks-33864dbaf92b810ab68ec5a3d29cc5a2",
+    "created_time": "2026-04-04T16:52:00.000Z",
+    "last_edited_time": "2026-04-04T16:52:00.000Z",
+    "Capture Context": [
+      "33864dba-f92b-81f6-995e-d192668f50ac"
+    ],
+    "Source Quote": "Paraphrase: quick thought builds the most coherent account it can from the evidence at hand.",
+    "Because": "Speed comes from compressing evidence into a coherent narrative early, while slower checking happens later if it happens at all.",
+    "Related Atoms": [
+      "33864dba-f92b-81e3-b388-ca1c7044476a"
+    ],
+    "Type": "mechanism",
+    "Domain": [
+      "economics"
+    ],
+    "Confidence": "4 - Strong",
+    "Boundaries": "Useful for rapid orientation, but unreliable when the environment is noisy, adversarial, or statistically unintuitive.",
+    "Used In Artifacts": [
+      "33864dba-f92b-8107-a452-c337909495e2"
+    ],
+    "Atom ID": "ATM-5",
+    "Source": [
+      "33864dba-f92b-81ec-bd08-cc4f05c4d358"
+    ],
+    "Reuse Count": 0,
+    "Definition": "Fast judgment produces an immediately usable interpretation by assembling a plausible story from partial cues.",
+    "Claim": "Fast cognition optimizes for coherent stories before careful accuracy checks",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33864dba-f92b-8136-9f02-fb8c7a87e248",
+    "url": "https://www.notion.so/Cognitive-fluency-is-often-misread-as-evidence-of-truth-33864dbaf92b81369f02fb8c7a87e248",
+    "created_time": "2026-04-04T16:52:00.000Z",
+    "last_edited_time": "2026-04-04T16:52:00.000Z",
+    "Capture Context": [
+      "33864dba-f92b-810f-bde0-c4425a64d81e"
+    ],
+    "Source Quote": "Paraphrase: ease of processing can masquerade as evidence.",
+    "Because": "Fluency reduces friction in judgment, and the mind treats that low friction as a cue for familiarity, safety, or correctness.",
+    "Related Atoms": [],
+    "Type": "heuristic",
+    "Domain": [
+      "economics"
+    ],
+    "Confidence": "4 - Strong",
+    "Boundaries": "Fluency can correlate with truth in familiar settings, but it breaks when repetition, style, or framing create false confidence.",
+    "Used In Artifacts": [],
+    "Atom ID": "ATM-6",
+    "Source": [
+      "33864dba-f92b-81ec-bd08-cc4f05c4d358"
+    ],
+    "Reuse Count": 0,
+    "Definition": "Ideas that are easier to process can feel more credible even when the underlying evidence is weak.",
+    "Claim": "Cognitive fluency is often misread as evidence of truth",
+    "content": [],
+    "content_plain": ""
+  },
+  {
+    "id": "33864dba-f92b-81e3-b388-ca1c7044476a",
+    "url": "https://www.notion.so/Counterfactual-reasoning-is-what-makes-causal-models-useful-for-explanation-and-choice-33864dbaf92b81e3b388ca1c7044476a",
+    "created_time": "2026-04-04T16:52:00.000Z",
+    "last_edited_time": "2026-04-04T16:52:00.000Z",
+    "Capture Context": [
+      "33864dba-f92b-81e9-90b8-ccb9c98cdc55"
+    ],
+    "Source Quote": "Paraphrase: causal understanding reaches its highest utility when it can answer what would have happened otherwise.",
+    "Because": "Intervention answers what happens when we act, but counterfactuals answer whether a different action or condition would have changed the outcome.",
+    "Related Atoms": [],
+    "Type": "concept",
+    "Domain": [
+      "causal inference"
+    ],
+    "Confidence": "4 - Strong",
+    "Boundaries": "Counterfactuals only help when the underlying causal model is credible; observational correlations alone cannot support them.",
+    "Used In Artifacts": [
+      "33864dba-f92b-8188-8105-d7e542dc3782"
+    ],
+    "Atom ID": "ATM-7",
+    "Source": [
+      "33764dba-f92b-81a5-bb86-f0477cc08a67"
+    ],
+    "Reuse Count": 0,
+    "Definition": "A causal model becomes decision-relevant when it can compare the observed world with plausible alternative worlds.",
+    "Claim": "Counterfactual reasoning is what makes causal models useful for explanation and choice",
     "content": [],
     "content_plain": ""
   }

@@ -5,7 +5,7 @@ title: "Disentanglement is too weak without causal assumptions"
 generated: true
 detail_page: "capture-cap-3.html"
 public_url: ""
-notion_url: "https://www.notion.so/33764dbaf92b816e8ad3c94e7cd268a4"
+notion_url: "https://www.notion.so/Disentanglement-is-too-weak-without-causal-assumptions-33764dbaf92b816e8ad3c94e7cd268a4"
 domains:
   - "causal inference"
   - "deep learning"
@@ -13,14 +13,14 @@ created_time: "2026-04-03T22:53:00.000Z"
 last_edited_time: "2026-04-03T22:53:00.000Z"
 type: "Reflection"
 status: "Used"
-summary: "The paper's critique is that statistical factorization alone cannot recover variables that support intervention and transfer."
+summary: "The paper’s critique is that statistical factorization alone cannot recover variables that support intervention and transfer."
 ---
 
 # Disentanglement is too weak without causal assumptions
 
 ## Summary
 
-The paper's critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
+The paper’s critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
 
 ## Excerpt
 

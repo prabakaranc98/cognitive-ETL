@@ -52,6 +52,42 @@
       "reuse_count": 0
     },
     {
+      "id": "atom:ATM-5",
+      "label": "Fast cognition optimizes for coherent stories before careful accuracy checks",
+      "url": "atom-atm-5.html",
+      "type": "atom",
+      "domain": [
+        "economics"
+      ],
+      "confidence": "4 - Strong",
+      "atom_type": "mechanism",
+      "reuse_count": 0
+    },
+    {
+      "id": "atom:ATM-6",
+      "label": "Cognitive fluency is often misread as evidence of truth",
+      "url": "atom-atm-6.html",
+      "type": "atom",
+      "domain": [
+        "economics"
+      ],
+      "confidence": "4 - Strong",
+      "atom_type": "heuristic",
+      "reuse_count": 0
+    },
+    {
+      "id": "atom:ATM-7",
+      "label": "Counterfactual reasoning is what makes causal models useful for explanation and choice",
+      "url": "atom-atm-7.html",
+      "type": "atom",
+      "domain": [
+        "causal inference"
+      ],
+      "confidence": "4 - Strong",
+      "atom_type": "concept",
+      "reuse_count": 0
+    },
+    {
       "id": "source:SRC-3",
       "label": "Thinking in Systems: A Primer",
       "url": "source-src-3.html",
@@ -85,9 +121,19 @@
       ]
     },
     {
-      "id": "capture:CAP-1",
-      "label": "ICM as the paper's backbone assumption",
-      "url": "capture-cap-1.html",
+      "id": "source:SRC-4",
+      "label": "Thinking, Fast and Slow",
+      "url": "source-src-4.html",
+      "type": "source",
+      "source_type": "Book",
+      "domain": [
+        "economics"
+      ]
+    },
+    {
+      "id": "capture:CAP-4",
+      "label": "Environment diversity is the real supervision signal",
+      "url": "capture-cap-4.html",
       "type": "capture",
       "capture_type": "Rough Synthesis",
       "status": "Used",
@@ -97,11 +143,11 @@
       ]
     },
     {
-      "id": "capture:CAP-2",
-      "label": "Invariant features matter because environments change",
-      "url": "capture-cap-2.html",
+      "id": "capture:CAP-1",
+      "label": "ICM as the paper's backbone assumption",
+      "url": "capture-cap-1.html",
       "type": "capture",
-      "capture_type": "Highlight",
+      "capture_type": "Rough Synthesis",
       "status": "Used",
       "domain": [
         "causal inference",
@@ -121,15 +167,48 @@
       ]
     },
     {
-      "id": "capture:CAP-4",
-      "label": "Environment diversity is the real supervision signal",
-      "url": "capture-cap-4.html",
+      "id": "capture:CAP-2",
+      "label": "Invariant features matter because environments change",
+      "url": "capture-cap-2.html",
       "type": "capture",
-      "capture_type": "Rough Synthesis",
+      "capture_type": "Highlight",
       "status": "Used",
       "domain": [
         "causal inference",
         "deep learning"
+      ]
+    },
+    {
+      "id": "capture:CAP-6",
+      "label": "Cognitive fluency often feels like truth before it deserves trust",
+      "url": "capture-cap-6.html",
+      "type": "capture",
+      "capture_type": "Highlight",
+      "status": "Distilling",
+      "domain": [
+        "economics"
+      ]
+    },
+    {
+      "id": "capture:CAP-7",
+      "label": "Counterfactual questions are what turn causal models into decision tools",
+      "url": "capture-cap-7.html",
+      "type": "capture",
+      "capture_type": "Rough Synthesis",
+      "status": "Distilling",
+      "domain": [
+        "causal inference"
+      ]
+    },
+    {
+      "id": "capture:CAP-5",
+      "label": "System 1 quickly produces coherent judgments from sparse evidence",
+      "url": "capture-cap-5.html",
+      "type": "capture",
+      "capture_type": "Rough Synthesis",
+      "status": "Distilling",
+      "domain": [
+        "economics"
       ]
     },
     {
@@ -143,15 +222,57 @@
         "causal inference",
         "deep learning"
       ]
+    },
+    {
+      "id": "artifact:ART-2",
+      "label": "Thinking, Fast and Slow \u2014 heuristics, fluency, and dual-process judgment",
+      "url": "artifact-art-2.html",
+      "type": "artifact",
+      "format": "One-Pager",
+      "status": "Drafting",
+      "domain": [
+        "economics"
+      ]
+    },
+    {
+      "id": "artifact:ART-3",
+      "label": "The Book of Why \u2014 intervention, counterfactuals, and causal explanation",
+      "url": "artifact-art-3.html",
+      "type": "artifact",
+      "format": "One-Pager",
+      "status": "Drafting",
+      "domain": [
+        "causal inference"
+      ]
     }
   ],
   "edges": [
+    {
+      "source": "source:SRC-2",
+      "target": "source:SRC-4",
+      "type": "related_source"
+    },
     {
       "source": "source:SRC-2",
       "target": "source:SRC-1",
       "type": "related_source"
     },
     {
+      "source": "capture:CAP-4",
+      "target": "source:SRC-1",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-4",
+      "target": "atom:ATM-4",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-4",
+      "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
       "source": "capture:CAP-1",
       "target": "source:SRC-1",
       "type": "captured_from_source"
@@ -163,21 +284,6 @@
     },
     {
       "source": "capture:CAP-1",
-      "target": "artifact:ART-1",
-      "type": "capture_to_artifact"
-    },
-    {
-      "source": "capture:CAP-2",
-      "target": "source:SRC-1",
-      "type": "captured_from_source"
-    },
-    {
-      "source": "capture:CAP-2",
-      "target": "atom:ATM-1",
-      "type": "capture_to_atom"
-    },
-    {
-      "source": "capture:CAP-2",
       "target": "artifact:ART-1",
       "type": "capture_to_artifact"
     },
@@ -197,18 +303,58 @@
       "type": "capture_to_artifact"
     },
     {
-      "source": "capture:CAP-4",
+      "source": "capture:CAP-2",
       "target": "source:SRC-1",
       "type": "captured_from_source"
     },
     {
-      "source": "capture:CAP-4",
-      "target": "atom:ATM-4",
+      "source": "capture:CAP-2",
+      "target": "atom:ATM-1",
       "type": "capture_to_atom"
     },
     {
-      "source": "capture:CAP-4",
+      "source": "capture:CAP-2",
       "target": "artifact:ART-1",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "capture:CAP-6",
+      "target": "source:SRC-4",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-6",
+      "target": "atom:ATM-6",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-7",
+      "target": "source:SRC-2",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-7",
+      "target": "atom:ATM-7",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-7",
+      "target": "artifact:ART-3",
+      "type": "capture_to_artifact"
+    },
+    {
+      "source": "capture:CAP-5",
+      "target": "source:SRC-4",
+      "type": "captured_from_source"
+    },
+    {
+      "source": "capture:CAP-5",
+      "target": "atom:ATM-5",
+      "type": "capture_to_atom"
+    },
+    {
+      "source": "capture:CAP-5",
+      "target": "artifact:ART-2",
       "type": "capture_to_artifact"
     },
     {
@@ -262,6 +408,26 @@
       "type": "related"
     },
     {
+      "source": "atom:ATM-5",
+      "target": "source:SRC-4",
+      "type": "from_source"
+    },
+    {
+      "source": "atom:ATM-5",
+      "target": "atom:ATM-7",
+      "type": "related"
+    },
+    {
+      "source": "atom:ATM-6",
+      "target": "source:SRC-4",
+      "type": "from_source"
+    },
+    {
+      "source": "atom:ATM-7",
+      "target": "source:SRC-2",
+      "type": "from_source"
+    },
+    {
       "source": "artifact:ART-1",
       "target": "atom:ATM-1",
       "type": "artifact_from_atom"
@@ -284,6 +450,26 @@
     {
       "source": "artifact:ART-1",
       "target": "source:SRC-1",
+      "type": "artifact_from_source"
+    },
+    {
+      "source": "artifact:ART-2",
+      "target": "atom:ATM-5",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-2",
+      "target": "source:SRC-4",
+      "type": "artifact_from_source"
+    },
+    {
+      "source": "artifact:ART-3",
+      "target": "atom:ATM-7",
+      "type": "artifact_from_atom"
+    },
+    {
+      "source": "artifact:ART-3",
+      "target": "source:SRC-2",
       "type": "artifact_from_source"
     }
   ]

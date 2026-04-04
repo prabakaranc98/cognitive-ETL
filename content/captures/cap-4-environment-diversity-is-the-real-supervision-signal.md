@@ -5,7 +5,7 @@ title: "Environment diversity is the real supervision signal"
 generated: true
 detail_page: "capture-cap-4.html"
 public_url: ""
-notion_url: "https://www.notion.so/33764dbaf92b812ca114c6d21800a919"
+notion_url: "https://www.notion.so/Environment-diversity-is-the-real-supervision-signal-33764dbaf92b812ca114c6d21800a919"
 domains:
   - "causal inference"
   - "deep learning"

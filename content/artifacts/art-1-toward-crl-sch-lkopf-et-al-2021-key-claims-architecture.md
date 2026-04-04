@@ -78,6 +78,17 @@ Single-environment data is ambiguous — both causal and spurious features predi
 
 ## Supporting Captures
 
+### [Environment diversity is the real supervision signal](../captures/cap-4-environment-diversity-is-the-real-supervision-signal.md)
+
+Rough Synthesis · Used
+
+Multiple environments make causal learning possible because changes reveal which features are invariant and which are spurious.
+
+> "Distribution shifts correspond to local interventions on the causal model, providing a natural supervision signal."
+
+This turns distribution shift from a nuisance into a learning signal and points to how datasets should be designed for causal representation learning.
+
+
 ### [ICM as the paper's backbone assumption](../captures/cap-1-icm-as-the-paper-s-backbone-assumption.md)
 
 Rough Synthesis · Used
@@ -89,6 +100,17 @@ The paper treats independent causal mechanisms as the structural reason causal r
 Without an explicit mechanism story, the representation-learning claim collapses back into pattern matching.
 
 
+### [Disentanglement is too weak without causal assumptions](../captures/cap-3-disentanglement-is-too-weak-without-causal-assumptions.md)
+
+Reflection · Used
+
+The paper’s critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
+
+> "Without further assumptions, unsupervised disentanglement is fundamentally impossible."
+
+This blocks a common shortcut in representation learning and forces the system toward structural assumptions instead of aesthetic latent spaces.
+
+
 ### [Invariant features matter because environments change](../captures/cap-2-invariant-features-matter-because-environments-change.md)
 
 Highlight · Used
@@ -98,25 +120,3 @@ The paper frames causal representations as the abstraction that survives domain 
 > "Causal models can be seen as the correct abstraction level for generalizing across domains."
 
 This is the core bridge from causal modeling to robust ML. It explains why invariance is the target rather than mere predictive fit.
-
-
-### [Disentanglement is too weak without causal assumptions](../captures/cap-3-disentanglement-is-too-weak-without-causal-assumptions.md)
-
-Reflection · Used
-
-The paper's critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
-
-> "Without further assumptions, unsupervised disentanglement is fundamentally impossible."
-
-This blocks a common shortcut in representation learning and forces the system toward structural assumptions instead of aesthetic latent spaces.
-
-
-### [Environment diversity is the real supervision signal](../captures/cap-4-environment-diversity-is-the-real-supervision-signal.md)
-
-Rough Synthesis · Used
-
-Multiple environments make causal learning possible because changes reveal which features are invariant and which are spurious.
-
-> "Distribution shifts correspond to local interventions on the causal model, providing a natural supervision signal."
-
-This turns distribution shift from a nuisance into a learning signal and points to how datasets should be designed for causal representation learning.

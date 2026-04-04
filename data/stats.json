@@ -1,14 +1,15 @@
 {
-  "total_sources": 3,
-  "total_captures": 4,
-  "total_atoms": 4,
-  "total_artifacts": 1,
+  "total_sources": 4,
+  "total_captures": 7,
+  "total_atoms": 7,
+  "total_artifacts": 3,
   "shipped_artifacts": 1,
-  "total_points": 18,
+  "total_points": 22,
   "total_reuse": 0,
   "domains": {
-    "causal inference": 8,
-    "deep learning": 7
+    "causal inference": 10,
+    "deep learning": 7,
+    "economics": 4
   },
-  "last_synced": "2026-04-03T22:58:29.898616Z"
+  "last_synced": "2026-04-04T17:14:50.763007Z"
 }

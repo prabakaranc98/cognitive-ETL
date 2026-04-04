@@ -2,10 +2,10 @@
 
 Generated markdown exports for local reading, editing, and reuse.
 
-- Sources: 3
-- Captures: 4
-- Atoms: 4
-- Artifacts: 1
+- Sources: 4
+- Captures: 7
+- Atoms: 7
+- Artifacts: 3
 
 ## Sections
 

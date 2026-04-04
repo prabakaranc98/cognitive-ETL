@@ -5,7 +5,7 @@ title: "Invariant features matter because environments change"
 generated: true
 detail_page: "capture-cap-2.html"
 public_url: ""
-notion_url: "https://www.notion.so/33764dbaf92b81c3bfa8e632bc6caef6"
+notion_url: "https://www.notion.so/Invariant-features-matter-because-environments-change-33764dbaf92b81c3bfa8e632bc6caef6"
 domains:
   - "causal inference"
   - "deep learning"

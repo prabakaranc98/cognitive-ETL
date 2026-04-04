@@ -5,7 +5,7 @@ title: "ICM as the paper's backbone assumption"
 generated: true
 detail_page: "capture-cap-1.html"
 public_url: ""
-notion_url: "https://www.notion.so/33764dbaf92b813e9682eeb263905a76"
+notion_url: "https://www.notion.so/ICM-as-the-paper-s-backbone-assumption-33764dbaf92b813e9682eeb263905a76"
 domains:
   - "causal inference"
   - "deep learning"

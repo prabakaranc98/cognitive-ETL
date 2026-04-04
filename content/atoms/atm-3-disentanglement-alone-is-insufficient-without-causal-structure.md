@@ -40,7 +40,7 @@ If true causal variables happen to be statistically independent, disentanglement
 
 Reflection · Used
 
-The paper's critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
+The paper’s critique is that statistical factorization alone cannot recover variables that support intervention and transfer.
 
 > "Without further assumptions, unsupervised disentanglement is fundamentally impossible."
 
