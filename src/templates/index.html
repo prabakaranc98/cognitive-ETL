@@ -29,134 +29,101 @@
   </header>
 
   <main class="container container--wide page-shell" id="main-content">
-    <section class="hero">
-      <h1 class="hero__title">Extract. Capture. Transform. <em>Load.</em></h1>
-      <p class="hero__subtitle">{{ site_description }}</p>
-      <p class="hero__note">A public research system for turning reading into linked captures, reusable ideas, and legible outputs.</p>
-      <p class="hero__manifesto">I built Cognitive ETL to resist passive reading. Every source passes through capture, compression, linking, and shipping, so the system nudges me to think more clearly, create more often, and turn scattered inputs into reusable structures that can help other people think too.</p>
-      <div class="hero-meta">
-        <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
-        <span class="hero-meta__pill">{{ stats.shipped_artifacts }} published artifact{{ '' if stats.shipped_artifacts == 1 else 's' }}</span>
+    <section class="hero hero-grid">
+      <div class="hero-copy">
+        <h1 class="hero__title">Extract. Capture. Transform. <em>Load.</em></h1>
+        <p class="hero__subtitle">{{ site_description }}</p>
+        <p class="hero__manifesto">Cognitive ETL is a thinking machine: each source is preserved as raw capture, compressed into atoms, and pushed into public artifacts so reading becomes a visible creative practice instead of private accumulation.</p>
       </div>
-      <div class="hero-actions">
-        <a class="button-primary" href="./graph.html">Enter the graph</a>
-        <a class="button-secondary" href="{{ latest_artifact.detail_href if latest_artifact else './captures.html' }}">{{ 'Read latest artifact' if latest_artifact else 'Browse captures' }}</a>
-      </div>
-    </section>
-
-    <section class="stats-bar stats-bar--calm">
-      <div class="stat">
-        <div class="stat__value">{{ stats.total_sources }}</div>
-        <div class="stat__label">Sources</div>
-      </div>
-      <div class="stat">
-        <div class="stat__value">{{ stats.total_captures }}</div>
-        <div class="stat__label">Captures</div>
-      </div>
-      <div class="stat">
-        <div class="stat__value">{{ stats.total_atoms }}</div>
-        <div class="stat__label">Atoms</div>
-      </div>
-      <div class="stat">
-        <div class="stat__value">{{ stats.shipped_artifacts }}</div>
-        <div class="stat__label">Shipped</div>
-      </div>
-    </section>
-
-    <section class="search-surface section-shell section-shell--search">
-      <div class="section__header search-surface__header">
-        <h2 class="section__title">Search the graph</h2>
-        <a class="section__link" href="./graph.html">Open the full network</a>
-      </div>
-      <p class="section__note">Start from a concept, a source, or a researcher. Search works best when it feels like an entry point rather than a filter panel.</p>
-      <div class="search-box search-box--surface">
-        <label class="sr-only" for="search-input">Search captures, atoms, artifacts, and sources</label>
-        <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input class="search-box__input" id="search-input" type="text" placeholder="Try ICM, causal inference, Schölkopf, The Book of Why…">
-      </div>
-      <div class="search-suggestions" aria-label="Suggested search queries">
-        <button class="search-suggestion" type="button" data-query="ICM">ICM</button>
-        <button class="search-suggestion" type="button" data-query="causal inference">causal inference</button>
-        <button class="search-suggestion" type="button" data-query="Schölkopf">Schölkopf</button>
-        <button class="search-suggestion" type="button" data-query="The Book of Why">The Book of Why</button>
-      </div>
-      <div id="search-results" aria-live="polite"></div>
-    </section>
-
-    <section class="section section-shell section-shell--model">
-      <div class="section__header">
-        <h2 class="section__title">The Model</h2>
-        <span class="section__link">Public knowledge ETL</span>
-      </div>
-      <p class="section__note">The system separates raw intake from reusable thought. Sources are inputs, captures preserve rough extraction, atoms hold defensible ideas, and artifacts are the public outputs.</p>
-      <div class="workflow-strip">
-        <article class="workflow-step workflow-step--source">
-          <span class="workflow-step__index">01</span>
-          <h3 class="workflow-step__title">Source</h3>
-          <p class="workflow-step__body">Something worth learning from.</p>
-        </article>
-        <article class="workflow-step workflow-step--capture">
-          <span class="workflow-step__index">02</span>
-          <h3 class="workflow-step__title">Capture</h3>
-          <p class="workflow-step__body">Rough extraction before abstraction.</p>
-        </article>
-        <article class="workflow-step workflow-step--atom">
-          <span class="workflow-step__index">03</span>
-          <h3 class="workflow-step__title">Atom</h3>
-          <p class="workflow-step__body">Reusable claim with provenance and boundaries.</p>
-        </article>
-        <article class="workflow-step workflow-step--artifact">
-          <span class="workflow-step__index">04</span>
-          <h3 class="workflow-step__title">Artifact</h3>
-          <p class="workflow-step__body">Public output that makes the thinking legible.</p>
-        </article>
-      </div>
+      <aside class="hero-proof section-shell section-shell--artifact">
+        <p class="spotlight-card__eyebrow">Current proof</p>
+        <h2 class="section__title">One live chain</h2>
+        <p class="hero-proof__body">Built from {{ stats.total_sources }} source{{ '' if stats.total_sources == 1 else 's' }}, {{ stats.total_captures }} capture{{ '' if stats.total_captures == 1 else 's' }}, {{ stats.total_atoms }} atom{{ '' if stats.total_atoms == 1 else 's' }}, and {{ stats.shipped_artifacts }} shipped artifact{{ '' if stats.shipped_artifacts == 1 else 's' }}.</p>
+        <div class="hero-meta">
+          <span class="hero-meta__pill">Last synced {{ last_synced_label }}</span>
+        </div>
+        <div class="hero-actions">
+          <a class="button-primary" href="{{ latest_artifact.detail_href if latest_artifact else './artifacts.html' }}">{{ 'Open latest artifact' if latest_artifact else 'Open artifacts' }}</a>
+          <a class="button-secondary" href="./graph.html">Enter the graph</a>
+        </div>
+      </aside>
     </section>
 
     <div class="overview-columns">
       <div class="overview-main">
         <section class="section section-shell section-shell--feature">
-          <div class="spotlight-grid">
-            {% if latest_artifact %}
-            <article class="spotlight-card spotlight-card--artifact">
-              <p class="spotlight-card__eyebrow">Latest artifact</p>
-              <h2 class="spotlight-card__title">{{ latest_artifact.Name }}</h2>
-              <p class="spotlight-card__body">{{ latest_artifact['Chapter/Section'] }}</p>
-              <div class="card__meta">
-                <span class="tag tag--accent">{{ latest_artifact.Format }}</span>
-                <span class="tag">{{ latest_artifact.source_summary }}</span>
-                <span class="tag">+{{ latest_artifact.Points }} pts</span>
-              </div>
-              <div class="card__actions">
-                <a class="card__action" href="{{ latest_artifact.detail_href }}">Open artifact</a>
-              </div>
-            </article>
-            {% endif %}
-
-            <article class="spotlight-card spotlight-card--essay">
-              <p class="spotlight-card__eyebrow">Why this exists</p>
-              <h2 class="spotlight-card__title">A system that makes thought compound</h2>
-              <p class="spotlight-card__body">The goal is not to read more and forget more. It is to preserve rough insight, force compression, and keep turning ideas into artifacts until thinking becomes a visible, reusable practice.</p>
-              <div class="card__meta">
-                <span class="tag">thinking</span>
-                <span class="tag">making</span>
-                <span class="tag">public research</span>
-              </div>
-            </article>
+          <div class="section__header">
+            <h2 class="section__title">Latest artifact</h2>
+            <a class="section__link" href="./artifacts.html">Browse all artifacts</a>
           </div>
+          {% if latest_artifact %}
+          <article class="spotlight-card spotlight-card--artifact spotlight-card--lead">
+            <p class="spotlight-card__eyebrow">{{ latest_artifact.Format }}</p>
+            <h2 class="spotlight-card__title">{{ latest_artifact.Name }}</h2>
+            <p class="spotlight-card__body">{{ latest_artifact['Chapter/Section'] }}</p>
+            <div class="card__details card__details--inline">
+              <span>{{ latest_artifact.source_summary }}</span>
+              <span>{{ latest_artifact.capture_count }} capture{{ '' if latest_artifact.capture_count == 1 else 's' }}</span>
+              <span>{{ latest_artifact.built_from_count }} atom{{ '' if latest_artifact.built_from_count == 1 else 's' }}</span>
+              {% if latest_artifact.Points %}<span>+{{ latest_artifact.Points }} pts</span>{% endif %}
+            </div>
+            <div class="card__actions">
+              <a class="card__action" href="{{ latest_artifact.detail_href }}">Open artifact</a>
+              {% if latest_artifact.public_url %}
+              <a class="card__action card__action--subtle" href="{{ latest_artifact.public_url }}" target="_blank" rel="noreferrer">Public link</a>
+              {% endif %}
+            </div>
+          </article>
+          {% endif %}
         </section>
 
-        <section class="section section-shell section-shell--atom">
+        <section class="section section-shell section-shell--model">
+          <div class="section__header">
+            <h2 class="section__title">One real lineage</h2>
+            <span class="section__link">Trace a single chain</span>
+          </div>
+          <p class="section__note">The product story is not storage. It is transformation. This strip shows one concrete path from input to shipped output.</p>
+          {% if latest_artifact %}
+          <div class="lineage-strip">
+            <article class="lineage-stage lineage-stage--source">
+              <span class="lineage-stage__label">Source</span>
+              {% if latest_artifact.sources_info %}
+              <a class="lineage-stage__title" href="{{ latest_artifact.sources_info[0].href }}">{{ latest_artifact.sources_info[0].title }}</a>
+              {% else %}
+              <span class="lineage-stage__title">{{ latest_artifact.source_summary }}</span>
+              {% endif %}
+              <p class="lineage-stage__meta">{{ latest_artifact.source_summary }}</p>
+            </article>
+            <article class="lineage-stage lineage-stage--capture">
+              <span class="lineage-stage__label">Captures</span>
+              <span class="lineage-stage__title">{{ latest_artifact.capture_count }} preserved</span>
+              <p class="lineage-stage__meta">{% for item in latest_artifact.captures_info[:2] %}{{ item.title }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+            </article>
+            <article class="lineage-stage lineage-stage--atom">
+              <span class="lineage-stage__label">Atoms</span>
+              <span class="lineage-stage__title">{{ latest_artifact.built_from_count }} reusable claims</span>
+              <p class="lineage-stage__meta">{% for item in latest_artifact.atoms_info[:2] %}{{ item.title }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+            </article>
+            <article class="lineage-stage lineage-stage--artifact">
+              <span class="lineage-stage__label">Artifact</span>
+              <a class="lineage-stage__title" href="{{ latest_artifact.detail_href }}">{{ latest_artifact.Name }}</a>
+              <p class="lineage-stage__meta">{{ latest_artifact.Format }}{% if latest_artifact['Date Shipped'] %} · {{ latest_artifact['Date Shipped'] }}{% endif %}</p>
+            </article>
+          </div>
+          {% endif %}
+        </section>
+
+        <section class="section section-shell section-shell--feature-grid">
+          <div class="split-panels">
+            <section class="split-panel split-panel--atom">
           <div class="section__header">
             <h2 class="section__title">Recent atoms</h2>
             <a class="section__link" href="./atoms.html">Browse all atoms</a>
           </div>
-          <p class="section__note">This is the living graph preview: reusable ideas, not just reading logs.</p>
+          <p class="section__note">Reusable claims, not reading logs.</p>
 
           {% if featured_atoms %}
-          <div class="atom-grid">
+          <div class="atom-grid atom-grid--compact">
             {% for atom in featured_atoms %}
             <article class="atom-card">
               <div class="card__meta atom-card__meta">
@@ -180,102 +147,92 @@
             {% endfor %}
           </div>
           {% endif %}
-        </section>
-
-        <section class="section section-shell section-shell--artifact">
+            </section>
+            <section class="split-panel split-panel--capture">
           <div class="section__header">
-            <h2 class="section__title">Recent artifacts</h2>
-            <a class="section__link" href="./artifacts.html">Browse all artifacts</a>
+            <h2 class="section__title">Recent captures</h2>
+            <a class="section__link" href="./captures.html">Browse all captures</a>
           </div>
-          <p class="section__note">Public outputs are the clearest proof that the system is producing reusable work, not just storing notes.</p>
+          <p class="section__note">Raw extraction before abstraction.</p>
 
-          {% if artifacts %}
-          <div class="card-grid card-grid--balanced card-grid--artifacts">
-            {% for artifact in artifacts[:3] %}
-            <article class="card card--interactive card--artifact" data-domains="{{ (artifact.Domain or []) | join(',') }}">
-              <span class="card__badge">{{ artifact.Format or 'Artifact' }}</span>
-              <h3 class="card__title">{{ artifact.Name or 'Untitled' }}</h3>
-              {% if artifact['Chapter/Section'] %}
-              <p class="card__body">{{ artifact['Chapter/Section'] }}</p>
-              {% endif %}
-              <div class="card__details">
-                <span>Built from {{ artifact.built_from_count }} atom{{ '' if artifact.built_from_count == 1 else 's' }}</span>
-                <span>{{ artifact.capture_count }} capture{{ '' if artifact.capture_count == 1 else 's' }}</span>
-                <span>{{ artifact.source_summary }}</span>
-                {% if artifact['Date Shipped'] %}
-                <span>Shipped {{ artifact['Date Shipped'] }}</span>
-                {% endif %}
+          {% if captures %}
+          <div class="workspace-list">
+            {% for capture in captures[:4] %}
+            <a class="workspace-list__item workspace-list__item--capture" href="{{ capture.detail_href }}">
+              <div class="workspace-list__main">
+                <strong class="workspace-list__title">{{ capture.display_title }}</strong>
+                <p class="workspace-list__body">{{ capture.summary or capture.source_summary }}</p>
               </div>
-              <div class="card__meta">
-                <span class="tag tag--accent">{{ artifact.Status or 'Draft' }}</span>
-                {% for domain in (artifact.Domain or []) %}
-                <span class="tag">{{ domain }}</span>
-                {% endfor %}
-                {% if artifact.Points %}
-                <span class="tag">+{{ artifact.Points }} pts</span>
-                {% endif %}
+              <div class="workspace-list__side">
+                <span>{{ capture.display_status }}</span>
+                <small>{{ capture.atom_count }} atom{{ '' if capture.atom_count == 1 else 's' }}</small>
               </div>
-              <div class="card__actions">
-                <a class="card__action" href="{{ artifact.detail_href }}">Open</a>
-                {% if artifact.public_url %}
-                <a class="card__action card__action--subtle" href="{{ artifact.public_url }}" target="_blank" rel="noreferrer">Public link</a>
-                {% endif %}
-              </div>
-            </article>
+            </a>
             {% endfor %}
           </div>
-          {% else %}
-          <div class="empty-state">
-            <div class="empty-state__icon">📦</div>
-            <h3 class="empty-state__title">No artifacts yet</h3>
-            <p class="empty-state__body">Process a capture into atoms and ship the first artifact to see it here.</p>
-          </div>
           {% endif %}
+            </section>
+          </div>
         </section>
       </div>
 
       <aside class="overview-rail">
-        <section class="section section-shell section-shell--capture section-shell--rail">
+        <section class="section section-shell section-shell--search section-shell--rail">
           <div class="section__header">
-            <h2 class="section__title">Latest capture</h2>
-            <a class="section__link" href="./captures.html">Browse all captures</a>
+            <h2 class="section__title">Trace an idea</h2>
+            <a class="section__link" href="./graph.html">Open graph</a>
           </div>
-          {% if latest_capture %}
-          <article class="spotlight-card spotlight-card--subtle">
-            <p class="spotlight-card__eyebrow">{{ latest_capture.display_type }}</p>
-            <h2 class="spotlight-card__title">{{ latest_capture.display_title }}</h2>
-            <p class="spotlight-card__body">{{ latest_capture.summary or latest_capture.source_summary }}</p>
-            <div class="card__meta">
-              <span class="tag tag--accent">{{ latest_capture.display_status }}</span>
-              <span class="tag">{{ latest_capture.source_summary }}</span>
-            </div>
-            <div class="card__actions">
-              <a class="card__action" href="{{ latest_capture.detail_href }}">Open capture</a>
-            </div>
-          </article>
-          {% elif active_reads %}
-          <div class="stack-list">
-            {% for source in active_reads %}
-            <a class="stack-list__item" href="{{ source.detail_href }}">
-              <span>
-                <strong>{{ source.Name }}</strong>
-                <small>{{ source.progress_label }} · {{ source.Status }}</small>
-              </span>
-              <span>Open</span>
-            </a>
-            {% endfor %}
+          <p class="section__note">Start with a paper, concept, or researcher. Search is the front door to the graph, not a filter utility.</p>
+          <div class="search-box search-box--surface search-box--compact">
+            <label class="sr-only" for="search-input">Search captures, atoms, artifacts, and sources</label>
+            <svg class="search-box__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input class="search-box__input" id="search-input" type="text" placeholder="ICM, Pearl, Schölkopf…">
           </div>
-          {% else %}
-          <p class="spotlight-card__body">The capture layer is still forming. Fragments, highlights, and rough reactions will collect here before they become atoms.</p>
-          {% endif %}
+          <div class="search-suggestions" aria-label="Suggested search queries">
+            <button class="search-suggestion" type="button" data-query="ICM">ICM</button>
+            <button class="search-suggestion" type="button" data-query="causal inference">causal inference</button>
+            <button class="search-suggestion" type="button" data-query="Schölkopf">Schölkopf</button>
+          </div>
+          <div id="search-results" aria-live="polite"></div>
+        </section>
+
+        <section class="section section-shell section-shell--model section-shell--rail">
+      <div class="section__header">
+        <h2 class="section__title">The model</h2>
+        <span class="section__link">What this system does</span>
+      </div>
+      <div class="workflow-strip workflow-strip--vertical">
+        <article class="workflow-step workflow-step--source">
+          <span class="workflow-step__index">01</span>
+          <h3 class="workflow-step__title">Source</h3>
+          <p class="workflow-step__body">Books, papers, talks, and conversations.</p>
+        </article>
+        <article class="workflow-step workflow-step--capture">
+          <span class="workflow-step__index">02</span>
+          <h3 class="workflow-step__title">Capture</h3>
+          <p class="workflow-step__body">Highlights, fragments, rough synthesis.</p>
+        </article>
+        <article class="workflow-step workflow-step--atom">
+          <span class="workflow-step__index">03</span>
+          <h3 class="workflow-step__title">Atom</h3>
+          <p class="workflow-step__body">Defensible claims with boundaries.</p>
+        </article>
+        <article class="workflow-step workflow-step--artifact">
+          <span class="workflow-step__index">04</span>
+          <h3 class="workflow-step__title">Artifact</h3>
+          <p class="workflow-step__body">Published outputs anyone can use.</p>
+        </article>
+      </div>
         </section>
 
         <section class="section section-shell section-shell--source section-shell--rail">
       <div class="section__header">
-        <h2 class="section__title">Sources in motion</h2>
+        <h2 class="section__title">Source library</h2>
         <a class="section__link" href="./sources.html">Open source library</a>
       </div>
-      <p class="section__note">Inputs stay visible, but only as a compact working library on the overview.</p>
+      <p class="section__note">A compact preview of the working library and what is currently being transformed.</p>
 
       {% if sources %}
       <div class="workspace-list">
@@ -294,37 +251,6 @@
       </div>
       {% else %}
       <div class="empty-state">
-        <div class="empty-state__icon">📚</div>
-        <h3 class="empty-state__title">No sources yet</h3>
-        <p class="empty-state__body">Add a book, paper, article, or conversation to get started.</p>
-      </div>
-      {% endif %}
-        </section>
-
-        <section class="section section-shell section-shell--capture section-shell--rail">
-      <div class="section__header">
-        <h2 class="section__title">Capture queue</h2>
-        <a class="section__link" href="./captures.html">Browse all captures</a>
-      </div>
-      <p class="section__note">Recent extractions stay concise here. The full capture workspace lives on its own page.</p>
-
-      {% if captures %}
-      <div class="workspace-list">
-        {% for capture in captures[:6] %}
-        <a class="workspace-list__item workspace-list__item--capture" href="{{ capture.detail_href }}">
-          <div class="workspace-list__main">
-            <strong class="workspace-list__title">{{ capture.display_title }}</strong>
-            <p class="workspace-list__body">{{ capture.summary or capture.source_summary }}</p>
-          </div>
-          <div class="workspace-list__side">
-            <span>{{ capture.display_status }}</span>
-            <small>{{ capture.atom_count }} atom{{ '' if capture.atom_count == 1 else 's' }}</small>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="empty-state">
         <div class="empty-state__icon">📝</div>
         <h3 class="empty-state__title">Capture layer is still forming</h3>
         <p class="empty-state__body">This is where raw highlights, fragments, and reactions will accumulate before they become atoms.</p>
@@ -335,9 +261,9 @@
         <section class="section section-shell section-shell--system section-shell--rail">
       <div class="section__header">
         <h2 class="section__title">System state</h2>
-        <span class="section__link">Operational telemetry</span>
+        <span class="section__link">Compressed telemetry</span>
       </div>
-      <p class="section__note">The process remains visible, but it sits below the meaning layer.</p>
+      <p class="section__note">The process stays visible, but quieter than the outputs and lineage.</p>
 
       <div class="insight-grid">
         <article class="panel panel--quiet">
