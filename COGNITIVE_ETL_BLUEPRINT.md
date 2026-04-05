@@ -2,6 +2,20 @@
 
 **Extract, Transform, Load — as a Cognitive Function.**
 
+## Why This Exists
+
+This is a contrarian project in a landscape largely shaped by "automate everything with agents."
+
+The premise here is the opposite: build systems and choice architectures that **strengthen individual thought**, introduce **meaningful friction in execution**, and help people think originally — develop their own thesis, and observe how it evolves over time — rather than simply consuming others' ideas and playbooks.
+
+The goal is not productivity. It is **epistemic ownership**.
+
+Even as small pieces of a larger vision, such systems can reduce noise, bring clarity, and help a person focus on what is actually essential. Sometimes building your own system looks like reinvention — but that process is often what allows the think-do cycle to emerge naturally.
+
+---
+
+**Extract, Transform, Load — as a Cognitive Function.**
+
 A low-friction system for turning books, papers, thoughts, conversations, and half-formed ideas into:
 
 - reusable units of thinking
@@ -17,7 +31,7 @@ It is ETL for cognition:
 - `Load` = publish, present, resurface, reuse
 
 The key idea is simple:
-**human + machine do the meaning work together; automation handles the boring load/presentation layer.**
+**human does the meaning work; AI handles structure and formatting; automation handles the boring load/presentation layer.**
 
 ---
 
@@ -113,24 +127,25 @@ The raw packet becomes:
 - possible `Links`
 - maybe one `Artifact` draft
 
-Transformation is where AI helps most:
+This is the most creative layer — owned by the human.
 
-- drafting atomic claims
-- suggesting links to existing ideas
-- pulling out mechanisms and boundaries
-- identifying contradictions
-- creating first-pass summaries
-- turning notes into artifact outlines
+The human owns:
 
-But the human should still own:
+- identifying which claims are worth keeping
+- writing the actual atom: claim, definition, because, boundaries
+- making the interdisciplinary connection
+- deciding what is actionable (experiment, slide, proposal)
+- creating the artifact (slide deck, one-pager, note)
 
-- what is actually true
-- what is worth keeping
-- what is too vague
-- what should ship
+AI helps with the clerical and structural parts of Transform:
+
+- formatting already-written atoms to match the schema
+- suggesting links to existing atoms in the graph
+- checking for duplicates or overlaps
+- pushing structured content to Notion via API
 
 Rule:
-**AI proposes. Human approves.**
+**Human extracts the insight and writes it. AI formats and loads it.**
 
 ### 3. Load
 
@@ -166,12 +181,11 @@ Rule:
 
 ### AI
 
-- cleans raw notes
-- drafts structured atoms
-- proposes links and tags
-- spots duplicates
-- turns atoms into summaries, posts, slides, or outlines
-- helps maintain consistency
+- formats and structures atoms the human has already written
+- proposes links and tags between existing atoms
+- spots duplicates or overlaps
+- pushes structured content to Notion via API
+- helps maintain schema consistency
 
 ### Automation
 
@@ -183,8 +197,8 @@ Rule:
 
 This separation matters:
 
-- human = judgment
-- AI = synthesis
+- human = reading, thinking, extracting, writing, creating
+- AI = formatting, structuring, linking, loading
 - automation = reliability
 
 ---
@@ -460,15 +474,16 @@ The system should accept ugly input.
 
 ### Add atoms
 
-The system should let AI draft:
+The human writes the atom:
 
-- claim
+- claim (the intellectual insight, in your own words)
 - definition
-- because
-- boundaries
-- provenance
+- because (the mechanism)
+- boundaries (when it breaks down)
+- provenance (source quote)
 
-and let you approve or edit.
+AI then formats these fields, checks for duplicates, and pushes to Notion.
+The intellectual content must originate from you.
 
 ### Add artifacts
 
@@ -497,19 +512,19 @@ They should be linked as outputs of the same thinking pipeline.
    - what surprised me
    - what I disagree with
    - what changed for me
-4. Ask AI to draft atoms from that session.
-5. Approve only the good ones.
+4. Write your own atoms: the claims that stuck, in your words.
+5. Ask AI to format, link, and push them to Notion.
 
 ### Workflow B: Artifact Creation
 
 1. Select 3 to 7 atoms.
-2. Ask AI for:
-   - a slide outline
-   - a note
-   - a one-pager
-3. Edit lightly.
-4. attach the final link
-5. rebuild the storefront
+2. You create the artifact:
+   - one slide deck per chapter or interdisciplinary idea
+   - a structured note
+   - a one-pager proposal
+3. AI creates the Artifacts DB entry and links to the atoms.
+4. Attach the final artifact link.
+5. Rebuild the storefront.
 
 ### Workflow C: Weekly Review
 
@@ -565,10 +580,10 @@ Think of it as a maturity ladder.
 
 ### Level 2: AI-Assisted Structuring
 
-- auto-draft atoms from notes
-- suggest related atoms
-- draft artifact outlines
-- generate source summaries
+- AI formats and validates human-written atoms before pushing
+- suggest related atoms and spot duplicates
+- AI creates Artifacts DB entries from human-supplied artifact links
+- generate source metadata summaries from human-supplied notes
 
 ### Level 3: Connected Knowledge System
 
@@ -623,8 +638,9 @@ Success is:
 This system should behave like a **cognitive refinery**:
 
 - the world provides raw material
-- you and AI extract signal
-- you and AI transform it into clean thought
+- you read, think, and extract signal
+- you transform it into clean thought: atoms, slides, interdisciplinary ideas
+- AI formats and structures what you've written
 - automation loads it into durable, searchable, shareable form
 
 The end state is not just a second brain.
@@ -642,11 +658,11 @@ It is a **compounding thought infrastructure** that is:
 Build a system where:
 
 - capture is ugly but easy
-- transformation is assisted but reviewed
+- transformation is done by you — AI only helps format what you've already thought
 - loading is automated
 - reuse is rewarded
 - shipping is small and frequent
 - GitHub is the reliable surface
-- the storefront is the clean output of the whole loop
+- the storefront is a true reflection of your thinking, not AI synthesis
 
 That is Cognitive ETL.

@@ -4,6 +4,11 @@
 This is a Cognitive ETL system: Notion (backend) → Python (sync/build) → GitHub Pages (storefront).
 Three Notion databases: Sources, Atoms, Artifacts — connected via relations.
 
+### Division of Labor (critical)
+- **Human owns E and most of T**: reading, thinking, extracting key claims, writing atoms, making slides, proposing interdisciplinary ideas
+- **AI owns late-T and L**: structuring/formatting already-written content, pushing to Notion API, building the static site, deploy automation
+- AI must never invent atoms or artifact content. If the user provides raw notes or highlights, AI may suggest structure — but the intellectual claim must originate from the user.
+
 ## Key Commands
 
 ### Sync & Build
@@ -28,14 +33,14 @@ Three Notion databases: Sources, Atoms, Artifacts — connected via relations.
 Use the Notion API to create a page in the Sources database.
 Required fields: Name (title), Type, Author, Domain, Status="Reading"
 
-**Extract Atoms from highlights:**
-Parse the user's highlights/notes into atomic claims.
-Each atom needs: Claim (title), Definition, Because, Boundaries, Source Quote
-Push to Atoms DB via Notion API, link to the Source.
+**Push Atoms to Notion (human has already written them):**
+The user provides: Claim (title), Definition, Because, Boundaries, Source Quote.
+AI's job: validate the fields, push to Atoms DB via Notion API, link to the Source.
+AI must NOT invent or rewrite the intellectual content — only format and load.
 
 **Ship an Artifact:**
-Create the artifact content (slides, post, etc.)
-Create Artifacts DB entry linking to the atoms it uses.
+The user provides the artifact content (slides, post, etc.) — AI does not create this.
+AI's job: create the Artifacts DB entry, link to atoms it uses.
 Increment Reuse Count on each referenced atom.
 Calculate Points: +3 for artifact, +5 if ≥3 atoms linked, +10 per reused atom.
 
